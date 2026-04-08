@@ -37,7 +37,71 @@ Model có thể biết kiến thức này nhưng chưa chắc đã tuân theo fo
 Không vì dựa trên tài liệu nội bộ của khoá học, không public.
 
 ---
+## 3. Eval metrics
 
+AI tutor hiện có hai tính năng cốt lõi. Với mỗi tính năng, ta cần định nghĩa cụ thể "Báo Nhầm" (False Positive) và "Bỏ Sót" (False Negative) nghĩa là gì.
+
+---
+
+### Tính năng A: Trích xuất chủ đề từ slide
+
+AI quét slide và quyết định: "Đây là một chủ đề" hoặc "Đây không phải chủ đề."
+
+| | AI nói "Đây LÀ chủ đề" | AI nói "Đây KHÔNG phải chủ đề" |
+|---|---|---|
+| **Thực sự là chủ đề** | ✅ Đúng (TP) | ❌ **Bỏ Sót (FN)** — sinh viên không thấy chủ đề này, không thể học |
+| **Không phải chủ đề** | ❌ **Báo Nhầm (FP)** — sinh viên thấy một chủ đề giả/không liên quan trong danh sách | ✅ Đúng (TN) |
+
+**Loại lỗi nào tệ hơn?**
+
+- **Báo Nhầm (FP):** Sinh viên thấy một chủ đề rác như "chân trang slide" hoặc "tên giảng viên" bị trích xuất thành chủ đề. Khó chịu, nhưng sinh viên có thể bỏ qua.
+- **Bỏ Sót (FN):** Một chủ đề thật trên slide bị bỏ lọt hoàn toàn. Sinh viên không biết nó tồn tại — không thể học thứ mình không nhìn thấy. **Cái này tệ hơn.**
+
+**Quyết định: Ưu tiên RECALL cho Trích xuất Chủ đề.**
+
+Thêm vài chủ đề giả thì chấp nhận được. Bỏ sót chủ đề thật nghĩa là sinh viên có lỗ hổng kiến thức mà không hề hay biết.
+
+| Metric | Mục tiêu | Lý do |
+|---|---|---|
+| Recall | ≥ 95% | Gần như không bao giờ bỏ sót chủ đề thật |
+| Precision | ≥ 75% | Một ít nhiễu OK; sinh viên có thể bỏ qua chủ đề không liên quan |
+
+---
+
+### Tính năng B: Hành động trên chủ đề (Giải thích / Đơn giản hóa / Nghiên cứu thêm / Tạo quiz)
+
+Ở đây AI tạo nội dung giáo dục. Câu hỏi "phân loại" trở thành: Output này có đủ tốt để hiển thị cho sinh viên không?
+
+| | AI hiển thị output | AI giấu/cảnh báo output |
+|---|---|---|
+| **Output đúng & hữu ích** | ✅ Đúng (TP) | ❌ **Bỏ Sót (FN)** — sinh viên không nhận được giải thích hữu ích |
+| **Output sai hoặc gây hiểu nhầm** | ❌ **Báo Nhầm (FP)** — sinh viên học thứ SAI | ✅ Đúng (TN) |
+
+**Loại lỗi nào tệ hơn?**
+
+- **Bỏ Sót (FN):** AI quá thận trọng, từ chối giải thích hoặc nói "Tôi không chắc." Sinh viên không được giúp đỡ. Bực mình, nhưng không gây hại — có thể thử lại hoặc hỏi cách khác.
+- **Báo Nhầm (FP):** AI tự tin dạy sinh viên thứ **sai về mặt kiến thức**. Sinh viên tin tưởng tutor và ghi nhớ kiến thức sai. **Cái này tệ hơn nhiều.**
+
+**Quyết định: Ưu tiên PRECISION cho Hành động trên Chủ đề.**
+
+AI nói "Tôi không chắc về điều này" tốt hơn nhiều so với tự tin dạy sai.
+
+| Metric | Mục tiêu | Lý do |
+|---|---|---|
+| Precision | ≥ 95% | Khi AI dạy, phải dạy đúng |
+| Recall | ≥ 80% | Vẫn phủ được phần lớn chủ đề, nhưng OK nếu thận trọng với edge case |
+
+### Áp dụng vào các **tính năng con** của tutor:
+
+| Tính năng con | User thấy lỗi không? | Chi phí lỗi | Ưu tiên |
+|---|---|---|---|
+| **Trích xuất chủ đề** | Có — sinh viên thấy danh sách chủ đề | Bỏ sót chủ đề = mất giá trị học tập (FN) | **RECALL** |
+| **Đơn giản hóa** | Một phần — sinh viên có thể không phát hiện lỗi tinh vi | Đơn giản hóa sai = hiểu nhầm (FP) | **PRECISION** |
+| **Nghiên cứu thêm** | Một phần — sinh viên tin nguồn được trích dẫn | Nguồn bịa = thông tin sai lệch (FP) | **PRECISION** |
+| **Tạo quiz** | Có — sinh viên thấy quiz & đáp án | Đáp án sai = sinh viên học sai; nhưng có thể phát hiện | **PRECISION** (nghiêng về) |
+| **Giải thích cách khác** | Một phần — phép so sánh có thể gây hiểu nhầm | Phép so sánh tệ = nhầm lẫn, nhưng ít "sai cứng" hơn | **Cân bằng** |
+
+---
 
 
 ## 4. Top 3 Failure Modes trong LangGraph Agent
