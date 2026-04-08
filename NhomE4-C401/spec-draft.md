@@ -60,7 +60,8 @@ Tạo ra trải nghiệm "ông nói gà, bà nói vịt". Tutor đẩy sinh viê
 
 - Sử dụng **Structured Output** (Pydantic) cho các nút phân loại ý định để đảm bảo đầu ra của LLM luôn khớp với các cạnh (edges) đã định nghĩa trong đồ thị.
 - Thiết lập một nút **"Check-point"**: Sau mỗi 2–3 bước giải thích, Tutor phải hỏi xác nhận mức độ hiểu bài của sinh viên trước khi di chuyển đến nút nội dung tiếp theo.
-***5. ROI 3 KỊCH BẢN***
+
+##***5. ROI 3 KỊCH BẢN***
 ## Đề tài: AI tutor bài giảng cho sinh viên
 
 |   | Conservative | Realistic | Optimistic |
