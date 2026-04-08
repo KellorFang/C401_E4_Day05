@@ -41,8 +41,6 @@ Không vì dựa trên tài liệu nội bộ của khoá học, không public.
 
 AI tutor hiện có hai tính năng cốt lõi. Với mỗi tính năng, ta cần định nghĩa cụ thể "Báo Nhầm" (False Positive) và "Bỏ Sót" (False Negative) nghĩa là gì.
 
----
-
 ### Tính năng A: Trích xuất chủ đề từ slide
 
 AI quét slide và quyết định: "Đây là một chủ đề" hoặc "Đây không phải chủ đề."
