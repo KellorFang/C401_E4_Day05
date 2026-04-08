@@ -333,9 +333,62 @@ Xảy ra khi Agent gọi tool nhưng tool không hoạt động đúng.
 - Cost/ngày vượt quá benefit 2 tháng liên tục
 
 ---
-6. Mini spec
+## 6. Mini AI Spec — AI Tutor cho khóa AI in Action
 
-   
+| VALUE | TRUST | FEASIBILITY |
+|---|---|---|
+| **User:** Sinh viên khóa C401 — AI in Action | **Precision cao** cho nội dung giảng dạy (giải thích, quiz): sai = sinh viên học sai kiến thức | **Cost:** ~$0.001/request |
+| **Pain:** Nghe giảng xong chưa hiểu, phải xem lại slide thủ công, làm assignment gặp khó không ai hỏi | **Recall cao** cho trích xuất chủ đề: bỏ sót = sinh viên có lỗ hổng kiến thức | **Latency:** <1s |
+| **Aug:** AI trả lời câu hỏi, giải thích, gợi ý bài tập — sinh viên quyết định cuối cùng | **Khi sai →** AI thừa nhận lỗi, trích xuất lại từ tài liệu, sinh viên có thể đối chiếu với slide gốc | **Risk chính:** Quá context window nếu xử lý tài liệu không tốt |
+| **Auto:** Tìm kiếm & trích xuất thông tin từ PDF/slide, web search | **Recovery:** Đánh giá sau mỗi câu trả lời, ghi log feedback, replan nếu user không hài lòng | **Dep:** LangGraph Agent + RAG pipeline, PDF/slide khóa học (nội bộ) |
+| **Value khi đúng:** Trả lời nhanh, không cần xem lại slide, hiểu rõ hơn, làm bài tốt hơn | | |
+
+| Learning Signal |
+|---|
+| ① User feedback thông tin sai → ghi log → cải thiện prompt/retrieval |
+| ② Đếm số lần user sửa output, số lần không hài lòng → biết đang tốt lên hay tệ đi |
+| ③ Data nội bộ khóa học (không public) → có marginal value, đối thủ không thu được |
+
+### Chi tiết kỹ thuật
+
+| Hạng mục | Chi tiết |
+|---|---|
+| Kiến trúc | LangGraph Agent + RAG pipeline |
+| Nguồn dữ liệu | PDF/slide khóa học (nội bộ, không public) |
+| Mô hình tương tác | Augmentation — AI gợi ý, user quyết định |
+| Tính năng chính | Trích xuất chủ đề, Giải thích, Đơn giản hóa, Nghiên cứu thêm, Tạo quiz |
+| Chi phí / request | ~$0.001 |
+| Latency mục tiêu | < 1s |
+| Escalation | Sau 3 lần retry → thông báo giới hạn cho user |
+
+### Input / Output
+
+- **Input:** Câu hỏi dạng text + tài liệu khóa học (PDF/slide) + context tùy chọn
+- **Output:** Trích xuất chủ đề từ slide, giải thích khái niệm, ví dụ thực tế (code/use case), câu hỏi quiz, link tài liệu chính thống
+
+### Ràng buộc & Giới hạn
+
+1. Chỉ trả lời dựa trên tài liệu khóa học — không dùng kiến thức ngoài để tránh hallucination
+2. Khi không chắc chắn: hỏi lại hoặc từ chối trả lời, không bao giờ bịa đặt
+3. Khi lỗi (parse PDF, API fail): trả thông báo lỗi rõ ràng + hướng dẫn, không tạo nội dung sai
+4. Structured Output (Pydantic) bắt buộc cho các nút phân loại intent
+5. State management dùng `Annotated` reducer để tránh mất dữ liệu khi chạy song song
+
+### Tiêu chí thành công
+
+| Tính năng | Metric chính | Mục tiêu |
+|---|---|---|
+| Trích xuất chủ đề | Recall | ≥ 95% |
+| Tạo nội dung (giải thích/quiz/nghiên cứu) | Precision | ≥ 95% |
+| Tỷ lệ quay lại dùng (sau pilot) | Retention | ≥ 40% |
+
+### Tiêu chí dừng dự án
+
+Dừng nếu sau 4 tuần pilot:
+- Tỷ lệ sinh viên quay lại dùng lần 2 < 40%
+- Độ chính xác AI < 70% (đánh giá bởi giảng viên)
+- Chi phí/ngày vượt benefit trong 2 tháng liên tục
+
 ---
 ## Phân công
 - Canvas - Công
