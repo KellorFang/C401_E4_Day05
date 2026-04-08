@@ -1,9 +1,50 @@
+# AI Product Canvas
 
-# Top 3 Failure Modes trong LangGraph Agent
+**Project:** AI Tutor cho học viên khoá học AI in Action
+---
+## 1. Canvas
+|   | Value | Trust | Feasibility |
+|---|-------|-------|-------------|
+| **Câu hỏi guide** | User nào? Pain gì? AI giải quyết gì mà cách hiện tại không giải được? | 1. Khi AI sai thì user bị ảnh hưởng thế nào? User biết AI sai bằng cách nào? User sửa bằng cách nào? <br> 2. Khi AI đúng thì user được lợi gì? <br> 3. Khi AI không chắc chắn thì sao? <br> 4. Khi user không hài lòng, mất niềm tin thì sao? | Cost bao nhiêu/request? Latency bao lâu? Risk chính là gì? |
+| **Trả lời** | *Học viên sau khi nghe giải thích lý thuyết xong, chưa hiểu rõ hay buổi chiều làm assignment gặp khó khăn, bắt buộc phải xem lại slide để đọc lại kiến thức. <br> <br> AI có thể trả lời câu hỏi của học viên, giải thích lại kiến thức, đưa ra ví dụ, gợi ý bài tập tương tự.* | *1. Khi AI trả lời sai → user có thể làm sai yêu cầu từ assignment, hoặc không hiểu đúng kiến thức. User biết AI sai khi đọc lại slide và thấy khác biệt, hoặc khi làm sai và bị báo lỗi. User sửa bằng cách hỏi lại AI hoặc xem lại slide, báo lỗi trực tiếp cho AI để replan và kiểm tra lại kiến thức.* <br> *2. Khi AI đúng → user được lợi khi có thể trả lời câu hỏi của mình nhanh chóng, không cần xem lại slide, có thể hiểu rõ hơn kiến thức, có thể làm bài tập tốt hơn.* <br> *3. Khi AI không chắc chắn → AI có thể trả lời không , AI sẽ biết mình không chắc chắn và có thể hỏi lại user hoặc xem lại slide.* <br> *4. Khi user không hài lòng, mất niềm tin → có đánh giá sau khi user trả lời xong, nếu user không hài lòng thì AI sẽ replan và kiểm tra lại kiến thức, ghi lại log để cải thiện.* | **cost:** ~$0.001/request <br> <br> **latency**: <1s <br> <br> **risk**: quá context window nếu xử lí tài liệu không tốt, search engine tìm thấy thông tin quá dài* |
 
 ---
 
-## 1. Vòng lặp vô tận (Infinite Loops)
+## Automation hay augmentation?
+
+**Justify:**
+
+*Augmentation — AI gợi ý, hỏi lại xác nhận với user, user quyết định cuối cùng.*
+
+*Automation — quá trình tìm kiếm thông tin từ tài liệu, slide, search engine.*
+
+---
+
+## Learning signal
+
+| # | Câu hỏi | Trả lời |
+|---|---------|---------|
+| 1 | User correction đi vào đâu? | *Mỗi lần user feedback thông tin bị sai → ghi log → dùng để cải thiện model* |
+| 2 | Product thu signal gì để biết tốt lên hay tệ đi? | *Đếm log số lần mà user feedback thông tin bị sai, số lần user sửa output, số lần user không hài lòng với output* |
+| 3 | Data thuộc loại nào? | *Domain-specific — model trả lời dựa trên tài liệu của khoá học* |
+
+**Có marginal value không?** 
+
+Model có thể biết kiến thức này nhưng chưa chắc đã tuân theo format hay yêu cầu của assignment, chưa biết rõ khoá học có kiến thức chi tiết nào. 
+
+**Ai khác cũng thu được data này không?**
+
+Không vì dựa trên tài liệu nội bộ của khoá học, không public.
+
+---
+
+
+
+## 4. Top 3 Failure Modes trong LangGraph Agent
+
+---
+
+### 4.1. Vòng lặp vô tận (Infinite Loops)
 
 Trong LangGraph, việc cho phép các nút (nodes) quay lại các nút trước đó (cycles) là một tính năng mạnh mẽ nhưng cũng là "con dao hai lưỡi".
 
@@ -23,7 +64,7 @@ Khi sinh viên đưa ra một câu hỏi mơ hồ hoặc Agent không tìm thấ
 
 ---
 
-## 2. State Inconsistency & Overwriting
+### 4.2. State Inconsistency & Overwriting
 
 LangGraph dựa vào một đối tượng `State` chung được truyền qua các nút. Lỗi thường xảy ra khi cập nhật trạng thái này không đúng cách.
 
@@ -42,7 +83,7 @@ AI Tutor sẽ "quên" những gì nó vừa nói ở bước trước, hoặc ph
 
 ---
 
-## 3. Semantic Routing Failures
+### 4.3. Semantic Routing Failures
 
 Đây là lỗi logic tại các nút điều hướng (Conditional Edges), nơi Agent quyết định bước tiếp theo dựa trên nội dung hội thoại.
 
@@ -61,8 +102,7 @@ Tạo ra trải nghiệm "ông nói gà, bà nói vịt". Tutor đẩy sinh viê
 - Sử dụng **Structured Output** (Pydantic) cho các nút phân loại ý định để đảm bảo đầu ra của LLM luôn khớp với các cạnh (edges) đã định nghĩa trong đồ thị.
 - Thiết lập một nút **"Check-point"**: Sau mỗi 2–3 bước giải thích, Tutor phải hỏi xác nhận mức độ hiểu bài của sinh viên trước khi di chuyển đến nút nội dung tiếp theo.
 
-##***5. ROI 3 KỊCH BẢN***
-## Đề tài: AI tutor bài giảng cho sinh viên
+## 5. ROI 3 KỊCH BẢN
 
 |   | Conservative | Realistic | Optimistic |
 |---|-------------|-----------|------------|
