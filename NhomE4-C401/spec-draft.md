@@ -268,7 +268,7 @@ AI Tutor sẽ "quên" những gì nó vừa nói ở bước trước, hoặc ph
 
 ### Mitigation
 
-- Hướng dẫn sinh viên cách sử dụng `Annotated` và các hàm reducer để gộp (merge) dữ liệu thay vì ghi đè hoàn toàn.
+- Sử dụng `Annotated` và các hàm reducer để gộp (merge) dữ liệu thay vì ghi đè hoàn toàn.
 - Định nghĩa Schema cho `State` rõ ràng: Phân tách rõ giữa `internal_monologue` (suy nghĩ nội bộ của Agent) và `final_response` (phản hồi cho sinh viên).
 
 ---
@@ -345,9 +345,9 @@ Xảy ra khi Agent gọi tool nhưng tool không hoạt động đúng.
 
 | Learning Signal |
 |---|
-| ① User feedback thông tin sai → ghi log → cải thiện prompt/retrieval |
-| ② Đếm số lần user sửa output, số lần không hài lòng → biết đang tốt lên hay tệ đi |
-| ③ Data nội bộ khóa học (không public) → có marginal value, đối thủ không thu được |
+| 1. User feedback thông tin sai → ghi log → cải thiện prompt/retrieval |
+| 2. Đếm số lần user sửa output, số lần không hài lòng → biết đang tốt lên hay tệ đi |
+| 3. Data nội bộ khóa học (không public) → có marginal value, đối thủ không thu được |
 
 ### Chi tiết kỹ thuật
 
