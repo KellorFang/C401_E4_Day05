@@ -292,6 +292,8 @@ Tạo ra trải nghiệm "ông nói gà, bà nói vịt". Tutor đẩy sinh viê
 - Sử dụng **Structured Output** (Pydantic) cho các nút phân loại ý định để đảm bảo đầu ra của LLM luôn khớp với các cạnh (edges) đã định nghĩa trong đồ thị.
 - Thiết lập một nút **"Check-point"**: Sau mỗi 2–3 bước giải thích, Tutor phải hỏi xác nhận mức độ hiểu bài của sinh viên trước khi di chuyển đến nút nội dung tiếp theo.
 
+---
+
 ## 5. ROI 3 KỊCH BẢN
 
 |   | Conservative | Realistic | Optimistic |
@@ -305,3 +307,16 @@ Tạo ra trải nghiệm "ông nói gà, bà nói vịt". Tutor đẩy sinh viê
 - Tỷ lệ sinh viên quay lại dùng lần 2 < 40% (low retention = sản phẩm không có giá trị thực)
 - Độ chính xác trả lời của AI < 70% theo đánh giá của giảng viên (AI sai nhiều = hại hơn lợi)
 - Cost/ngày vượt quá benefit 2 tháng liên tục
+
+---
+6. Mini spec
+
+   
+---
+## Phân công
+- Canvas - Công
+- 4 paths - Mong
+- Eval metrics - Thắng
+- top 3 failure modes - Toàn + Hoàng
+- ROI 3 kịch bản - Minh
+- Mini AI spec 1 trang - Huy
