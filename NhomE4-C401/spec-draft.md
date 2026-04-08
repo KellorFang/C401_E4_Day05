@@ -89,6 +89,8 @@ AI nói "Tôi không chắc về điều này" tốt hơn nhiều so với tự 
 | Precision | ≥ 95% | Khi AI dạy, phải dạy đúng |
 | Recall | ≥ 80% | Vẫn phủ được phần lớn chủ đề, nhưng OK nếu thận trọng với edge case |
 
+---
+
 ### Áp dụng vào các **tính năng con** của tutor:
 
 | Tính năng con | User thấy lỗi không? | Chi phí lỗi | Ưu tiên |
