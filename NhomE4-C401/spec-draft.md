@@ -37,6 +37,132 @@ Model có thể biết kiến thức này nhưng chưa chắc đã tuân theo fo
 Không vì dựa trên tài liệu nội bộ của khoá học, không public.
 
 ---
+
+## 2. Use Case Paths (Happy / Low-confidence / Failure / Correction)
+
+### 2.1 Happy Path
+
+#### Scenario
+Sinh viên đặt câu hỏi rõ ràng và cung cấp đầy đủ tài liệu liên quan (PDF bài giảng, context cụ thể).
+
+#### Flow
+
+1. Nhận input (câu hỏi + tài liệu)
+2. Xác định intent:
+   - Học lý thuyết
+   - Yêu cầu ví dụ thực tế
+   - Tìm tài liệu chính thống
+3. Trích xuất thông tin từ PDF (RAG)
+4. Kết hợp với kiến thức bên ngoài (web search, docs)
+5. Sinh câu trả lời hoàn chỉnh
+
+#### Output
+
+- Tóm tắt nội dung từ tài liệu
+- Giải thích khái niệm rõ ràng
+- Ví dụ thực tế (code hoặc use case)
+- Link tài liệu chính thống
+- Gợi ý bài tập hoặc GitHub repository
+
+#### Key Characteristics
+
+- Độ chính xác cao
+- Có context từ tài liệu người dùng
+- Có dẫn chứng từ nguồn đáng tin cậy
+
+---
+
+### 2.2 Low-Confidence Path
+
+#### Scenario
+
+- Tài liệu không chứa đủ thông tin
+- Câu hỏi mơ hồ hoặc quá rộng
+- Không xác định rõ intent
+
+#### Flow
+
+1. Phát hiện độ tự tin thấp:
+   - Thiếu dữ liệu từ PDF
+   - Query không rõ ràng
+2. Quyết định chiến lược:
+   - Hỏi lại người dùng để làm rõ
+   - Hoặc trả lời ở mức tổng quan
+
+#### Output
+
+- Thông báo thiếu thông tin
+- Câu hỏi làm rõ (clarifying questions)
+- Hoặc câu trả lời high-level
+
+#### Key Characteristics
+
+- Tránh hallucination
+- Minh bạch về giới hạn hệ thống
+- Hỗ trợ người dùng refine câu hỏi
+
+---
+
+### 2.3 Failure Path
+
+#### Scenario
+
+- Không đọc được file PDF
+- Lỗi khi gọi tool (search, GitHub, docs)
+- Không tìm thấy thông tin phù hợp
+
+#### Flow
+
+1. Phát hiện lỗi:
+   - Lỗi parse file
+   - Lỗi API hoặc hệ thống
+2. Dừng quá trình sinh câu trả lời
+3. Trả về thông báo lỗi + hướng dẫn
+
+#### Output
+
+- Thông báo lỗi rõ ràng
+- Gợi ý:
+  - Upload lại file
+  - Cung cấp thêm context
+  - Đặt lại câu hỏi
+
+#### Key Characteristics
+
+- Không tạo thông tin sai
+- Fail an toàn (safe failure)
+- Hướng dẫn người dùng tiếp tục
+
+---
+
+### 2.4 Correction Path
+
+#### Scenario
+
+- Người dùng phản hồi câu trả lời chưa đúng hoặc chưa đủ
+- Người dùng yêu cầu chi tiết hơn
+
+#### Flow
+
+1. Nhận feedback từ người dùng
+2. Đánh giá lại:
+   - Trích xuất lại dữ liệu từ PDF
+   - Tìm kiếm bổ sung từ nguồn ngoài
+3. Sinh câu trả lời cải thiện
+
+#### Output
+
+- Thừa nhận lỗi (nếu có)
+- Câu trả lời chính xác hơn
+- Bổ sung ví dụ, code, tài liệu hoặc repo
+
+#### Key Characteristics
+
+- Có khả năng học từ phản hồi
+- Cải thiện qua từng iteration
+- Tăng độ tin cậy của hệ thống
+
+---
 ## 3. Eval metrics
 
 AI tutor hiện có hai tính năng cốt lõi. Với mỗi tính năng, ta cần định nghĩa cụ thể "Báo Nhầm" (False Positive) và "Bỏ Sót" (False Negative) nghĩa là gì.
