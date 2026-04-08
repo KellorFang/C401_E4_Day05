@@ -230,7 +230,7 @@ AI nói "Tôi không chắc về điều này" tốt hơn nhiều so với tự 
 ---
 
 
-## 4. Top 3 Failure Modes trong LangGraph Agent
+## 4. Failure Modes trong LangGraph Agent
 
 ---
 
@@ -292,6 +292,30 @@ Tạo ra trải nghiệm "ông nói gà, bà nói vịt". Tutor đẩy sinh viê
 - Sử dụng **Structured Output** (Pydantic) cho các nút phân loại ý định để đảm bảo đầu ra của LLM luôn khớp với các cạnh (edges) đã định nghĩa trong đồ thị.
 - Thiết lập một nút **"Check-point"**: Sau mỗi 2–3 bước giải thích, Tutor phải hỏi xác nhận mức độ hiểu bài của sinh viên trước khi di chuyển đến nút nội dung tiếp theo.
 
+### 4.4. Tool Error (Lỗi khi gọi tool)
+
+Xảy ra khi Agent gọi tool nhưng tool không hoạt động đúng.
+
+### Trigger
+
+**Ví dụ:** 
+- API timeout / mất kết nối
+- API trả về lỗi (500, 404, rate limit)
+- Input sai format (query rỗng, thiếu param)
+- Tool trả về dữ liệu không đúng schema
+
+### Hệ quả
+
+- Node bị crash → toàn bộ graph dừng
+- Không có response trả về cho user
+- Trải nghiệm người dùng kém (treo / lỗi trắng màn hình)
+- Tăng chi phí nếu retry không kiểm soát
+
+### Mitigation
+
+- Try/Catch trong tool node.
+- Fallback khi tool fail.
+- Retry có giới hạn.
 ---
 
 ## 5. ROI 3 KỊCH BẢN
