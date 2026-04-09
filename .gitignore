@@ -1,2 +1,7 @@
 .DS_Store
 **/.DS_Store
+**/__pycache__
+.env
+src/chroma_db/
+*.pyc
+.pytest_cache/
