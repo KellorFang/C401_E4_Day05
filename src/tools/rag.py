@@ -1,6 +1,13 @@
 """RAG Tool — queries ChromaDB for course slide content."""
 
+import os
+
+from dotenv import load_dotenv
 from langchain_core.tools import tool
+
+load_dotenv()
+
+_PERSIST_DIR = os.path.join(os.path.dirname(__file__), "..", "chroma_db")
 
 
 @tool
@@ -14,7 +21,8 @@ def search_slides(query: str) -> str:
 
         embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
         vector_store = Chroma(
-            persist_directory="./chroma_db/",
+            collection_name="course_slides",
+            persist_directory=_PERSIST_DIR,
             embedding_function=embeddings,
         )
         retriever = vector_store.as_retriever(search_kwargs={"k": 3})
