@@ -1,7 +1,5 @@
 """GitHub Tool — fetches README.md from assignment repos."""
 
-import os
-
 from langchain_core.tools import tool
 
 
@@ -19,4 +17,7 @@ def fetch_assignment(repo_url: str) -> str:
     #   3. Decode base64 content from response
     #   4. Return the markdown text
     #   5. Handle errors: 404, private repo, rate limit
-    return f"TODO: Chua implement — can ket noi GitHub API. URL: {repo_url}"
+    #
+    # Teammate's implementation (fetch_github_repo) is available in git history
+    # at commit a2749b1 — needs to be adapted to match this interface.
+    return f"TODO: Chưa implement — cần kết nối GitHub API. URL: {repo_url}"
