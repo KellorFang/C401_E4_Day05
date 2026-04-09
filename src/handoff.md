@@ -7,7 +7,7 @@
 - **Cơ chế hoạt động:** **Augmentation** - AI gợi ý, đưa ra lời giải thích và học viên sẽ là người quyết định và làm bài cuối cùng. Automation ở khía cạnh tìm kiếm lý thuyết/slide.
 
 ## 2. Kiến Trúc & Công Nghệ (Tech Stack)
-- **Mô hình Ngôn ngữ (LLM):** `gpt-5-nano`.
+- **Mô hình Ngôn ngữ (LLM):** `gpt-5-mini`.
 - **Core Framework:** LangGraph để quản lý luồng hội thoại và tư duy của Agent (Reasoning, Routing).
 - **Công cụ (Tools):**
   - **Tavily Search:** Tìm kiếm thông tin mở rộng trên web.
