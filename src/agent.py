@@ -9,7 +9,7 @@ Usage:
     agent = create_tutor_agent()
     response = agent.invoke(
         {"messages": [{"role": "user", "content": "..."}]},
-        config={"recursion_limit": 10},
+        config={"recursion_limit": 5},
     )
     print(response["messages"][-1].content)
 """
@@ -100,14 +100,14 @@ def create_tutor_agent():
         # Single response
         result = agent.invoke(
             {"messages": [{"role": "user", "content": "RAG la gi?"}]},
-            config={"recursion_limit": 10},
+            config={"recursion_limit": 5},
         )
         print(result["messages"][-1].content)
 
         # Streaming
         for chunk in agent.stream(
             {"messages": [{"role": "user", "content": "RAG la gi?"}]},
-            config={"recursion_limit": 10},
+            config={"recursion_limit": 5},
         ):
             print(chunk)
     """
@@ -116,4 +116,4 @@ def create_tutor_agent():
         tools=ALL_TOOLS,
         system_prompt=SYSTEM_PROMPT,
     )
-    return agent
+    return agent.with_config({"recursion_limit": 5})
