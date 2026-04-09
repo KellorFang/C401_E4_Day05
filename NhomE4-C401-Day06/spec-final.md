@@ -296,7 +296,7 @@ Bốn lỗi cốt lõi đã được ánh xạ trực tiếp với kiến trúc 
 
 | VALUE | TRUST | FEASIBILITY |
 |---|---|---|
-| **User:** Sinh viên khóa C401 — AI in Action | **Precision cao** cho bài giảng/quiz | **Cost:** ~$0.001/request |
+| **User:** Sinh viên khóa C401 — AI in Action | **Precision cao** cho bài giảng/quiz | **Cost:** ~$0.008/request |
 | **Pain:** Cần người giải đáp ngay nội dung Slide | **Recall cao** cho trích xuất chủ đề | **Latency:** <1s |
 | **Aug:** AI khuyên giải, user quyết định code | **Khi sai →** Thừa nhận và tìm cách khác | **Risk:** Content context window limit |
 | **Auto:** Pipeline ingest Data & web search | **Recovery:** Ghi log LangSmith để sửa | **Dep:** Langchain Agent, OpenAI API |
