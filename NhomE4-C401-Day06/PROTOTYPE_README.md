@@ -30,6 +30,6 @@ AI chi goi y va giai thich (augmentation), khong bao gio viet code ho (khong aut
 ## Phan cong
 | Thanh vien | Phan | Output |
 |-----------|------|--------|
-| Huy | Agent core + system prompt + ingestion + UI + tests | `agent.py`, `ingest.py`, `tools/rag.py`, `app.py`, `tests/test_agent.py` |
+| Truong Dang Gia Huy | Agent core + system prompt + UI + tests | `agent.py`, `app.py`, `tests/test_agent.py` |
 | Teammate | Web search tool + ArXiv tool | `tools/web_search.py`, `tools/arxiv_search.py` |
-| Teammate | GitHub tool (scaffold) | `tools/github.py` (TODO) |
+| Teammate | GitHub tool (scaffold) | `tools/github.py` |
