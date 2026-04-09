@@ -1,0 +1,9 @@
+langchain>=0.3
+langchain-openai>=0.3
+langchain-community>=0.3
+langchain-chroma>=0.1.2
+langchain-pymupdf4llm
+tavily-python
+streamlit
+python-dotenv
+arxiv
