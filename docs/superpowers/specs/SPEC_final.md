@@ -16,13 +16,75 @@ After lectures, students struggle to recall concepts and get stuck on assignment
 
 ### Solution
 
-A chat-based agent that can search course slides, the web, academic papers, and assignment repos to answer student questions — without giving away full solutions.
+A chat-based agent that can:
+- Search course slides via **RAG** (with rich metadata: lecture date, slide number, source file)
+- Look up **assignment repos** on GitHub for guided support
+- Search **arXiv** for cutting-edge research references
+- Search the **web** (TavilySearch) for latest applications and real-world answers
+
+Planned extensions: visual slide source search UI, structured knowledge review mode, and guided learning mode.
 
 ---
 
 ## 2. Architecture
 
-### Single Agent + 4 Tools
+### System Flowchart
+
+```mermaid
+flowchart TD
+    User((Student)) <-->|Chat / Interacts| UI[Streamlit UI]
+    
+    subgraph "Frontend Output"
+        UI
+        VisualUX[Slide Image Render]
+        Widgets[Interactive Question JS]
+    end
+    
+    subgraph "AI Tutor Core"
+        Agent
+        Prompt[[System Prompt & Persona]]
+        Modes[[Special Modes: Review / Socratic]]
+        
+        Agent <--> Prompt
+        Agent <--> Modes
+    end
+    
+    UI <-->|Queries & Responses| Agent
+    Agent -.->|Triggers| VisualUX
+    Agent -.->|Renders| Widgets
+    
+    subgraph "Tools (Capabilities)"
+        T1[["search_slides (RAG)"]]
+        T2[["search_web"]]
+        T3[["fetch_assignment"]]
+        T4[["search_arxiv"]]
+    end
+    
+    Agent -->|Routes| T1 & T2 & T3 & T4
+    
+    subgraph "Data & External Sources"
+        DB[(Local ChromaDB)]
+        Tavily(Tavily API)
+        GitHub(GitHub API)
+        ArXiv(arXiv Database)
+    end
+    
+    T1 -->|Query| DB
+    T2 -->|Search| Tavily
+    T3 -->|Read README| GitHub
+    T4 -->|Find Papers| ArXiv
+    
+    subgraph "Offline Ingestion Pipeline"
+        PDFs[\Lecture PDFs/] --> Parser[Extract Text + RapidOCR]
+        Parser --> Chunk[Chunking + Rich Metadata]
+        Chunk --> Embed[OpenAI text-embedding-3-small]
+        Embed --> DB
+    end
+    
+    DB -.->|Source file, page & date metadata| VisualUX
+```
+
+### Core Agent + 4 Tools
 
 ```
 Streamlit Chat UI
@@ -30,7 +92,7 @@ Streamlit Chat UI
        v
 create_agent("openai:gpt-5-mini", tools=[...], prompt=system_prompt)
        |
-       |-- search_slides    -> ChromaDB (local, persisted)
+       |-- search_slides    -> ChromaDB (local, persisted) — chunks with rich metadata 
        |-- search_web       -> Tavily API
        |-- fetch_assignment -> GitHub REST API (README only)
        |-- search_arxiv     -> ArXiv Retriever
@@ -39,7 +101,7 @@ create_agent("openai:gpt-5-mini", tools=[...], prompt=system_prompt)
 ```
 
 **Two separate processes:**
-1. **Ingestion (run once):** PDF slides -> parse text & images (approach TBD by teammate) -> chunk with RecursiveCharacterTextSplitter -> embed with OpenAI text-embedding-3-small -> store in ChromaDB
+1. **Ingestion (run once):** PDF slides -> parse text & images with RapidOCR -> chunk with RecursiveCharacterTextSplitter -> embed with OpenAI text-embedding-3-small -> store in ChromaDB **with rich metadata per chunk**
 2. **Chat (runtime):** Student question -> agent reasons (ReAct loop) -> picks tool(s) -> synthesizes answer -> returns via Streamlit
 
 ### Why this architecture
@@ -47,6 +109,7 @@ create_agent("openai:gpt-5-mini", tools=[...], prompt=system_prompt)
 - `create_agent` handles the ReAct loop, tool binding, state management out of the box
 - Single agent with 4 tools is sufficient — multi-agent adds complexity with no benefit for this scope
 - ChromaDB runs in-process, no server setup needed for local pilot
+- Rich chunk metadata enables future features (slide source UX, review planning) without re-ingesting
 
 ---
 
@@ -114,6 +177,7 @@ You are NOT a code-writing service. You are NOT a general-purpose assistant.
 - ALWAYS check retrieved slide context before answering course-related questions.
 - ALWAYS cite the source slide and page number when using slide content
   (e.g., "Theo Lecture 03, trang 12...").
+- ALWAYS include slide metadata in your answer: lecture date, slide number, source file.
 - MUST ask a clarifying question when the student's intent is ambiguous —
   do NOT guess and route to the wrong tool.
 - MUST respond in the same language the student uses. Default: Vietnamese.
@@ -129,12 +193,14 @@ You have access to the following tools:
 1. search_slides: Search course lecture slides stored in a vector database.
    - Use when: student asks about course concepts, theory, definitions,
      examples from lectures.
+   - Returns: matched text chunks with metadata (source file, slide number, lecture date).
    - Do NOT use when: question is clearly about external libraries,
      current events, or non-course topics.
 
 2. search_web: Search the internet via Tavily.
    - Use when: student needs info beyond course slides — library docs,
-     error debugging, latest framework versions.
+     error debugging, latest framework versions, newest real-world applications
+     of a concept.
    - Do NOT use when: the answer is likely in course slides.
 
 3. fetch_assignment: Read README.md from a GitHub repository.
@@ -163,7 +229,7 @@ You have access to the following tools:
 - Use Markdown: headers, bullet points, code blocks where appropriate.
 - Keep answers concise but thorough.
 - Structure complex explanations as: concept -> example -> connection to course material.
-- When citing slides, use format: **[Lecture X, p.Y]**
+- When citing slides, use format: **[Lecture X, p.Y — YYYY-MM-DD]**
 </output_format>
 ```
 
@@ -180,7 +246,15 @@ You have access to the following tools:
 1. Scan `data/slides/` for `*.pdf`
 2. For each PDF: extract text (+ images/diagrams — approach TBD by teammate)
 3. Chunk with RecursiveCharacterTextSplitter
-4. Tag each chunk with metadata: `{source: filename, page: N}`
+4. Tag each chunk with **rich metadata**:
+   ```python
+   {
+       "source": "lecture-03-rag-fundamentals.pdf",  # source file name
+       "page": 12,                                   # slide/page number within PDF
+       "lecture_date": "2026-03-15",                 # date of the lecture
+       "lecture_index": 3,                           # lecture number (slide thứ mấy)
+   }
+   ```
 5. Embed all chunks with OpenAI
 6. Store in ChromaDB on disk
 
@@ -188,7 +262,7 @@ You have access to the following tools:
 
 ### 4.4 RAG Tool (`tools/rag.py`) — Scaffold + TODO
 
-**Purpose:** Query ChromaDB at runtime to retrieve relevant slide chunks.
+**Purpose:** Query ChromaDB at runtime to retrieve relevant slide chunks, returning both content and full metadata.
 
 **Interface:**
 
@@ -197,18 +271,22 @@ You have access to the following tools:
 def search_slides(query: str) -> str:
     """Search course lecture slides for relevant content about AI concepts,
     theory, and examples. Use this when students ask about course material.
+    Returns content with source metadata (lecture date, slide number, file name).
     Do NOT use for external library docs or current events."""
     # Load persisted ChromaDB
     # retriever = vector_store.as_retriever(search_kwargs={"k": 3})
     # docs = retriever.invoke(query)
-    # Format: "[source p.N]\ncontent" for each doc
+    # Format each doc:
+    #   "[Lecture {lecture_index}, p.{page} — {lecture_date} | {source}]\n{content}"
 ```
 
-Simple retriever call — all heavy lifting already done by `ingest.py`.
+The rich metadata in the returned string allows:
+- The agent to cite sources accurately in answers
+- *(Future)* The UI to display slide thumbnails or highlight source slides
 
 ### 4.5 Web Search Tool (`tools/web_search.py`) — Scaffold + TODO
 
-**Purpose:** Search the web for information beyond course slides.
+**Purpose:** Search the web for information beyond course slides, including latest real-world applications, library docs, and debugging help.
 
 **Tech:** `TavilySearchResults` from `langchain_community`
 
@@ -217,8 +295,9 @@ Simple retriever call — all heavy lifting already done by `ingest.py`.
 ```python
 @tool
 def search_web(query: str) -> str:
-    """Search the web for programming knowledge, library docs, or topics
-    not covered in course slides. Use when the question goes beyond course material.
+    """Search the web for programming knowledge, library docs, latest applications
+    of AI concepts, or topics not covered in course slides.
+    Use when the question goes beyond course material or asks about newest use cases.
     Do NOT use when the answer is likely in course slides."""
     # TODO: Initialize TavilySearchResults with api_key from env
     # TODO: Invoke search and format results
@@ -228,7 +307,7 @@ def search_web(query: str) -> str:
 
 ### 4.6 GitHub Tool (`tools/github.py`) — Scaffold + TODO
 
-**Purpose:** Fetch README.md from a GitHub repo to understand assignment requirements.
+**Purpose:** Fetch README.md from a GitHub repo to understand assignment requirements and guide students through them.
 
 **Tech:** GitHub REST API with token auth
 
@@ -337,6 +416,7 @@ arxiv
 | **Tool errors** | LangChain ToolNode handles try/catch + reports error back to LLM for self-correction |
 | **Out-of-scope questions** | System prompt constraint: politely redirect to course topics only |
 | **Hallucination** | "NEVER fabricate" constraint + citation requirement + "say I don't know" fallback |
+| **Missing slide metadata** | Ingestion pipeline validates metadata fields before storing; missing fields default to "unknown" |
 
 ---
 
@@ -371,7 +451,116 @@ arxiv
 
 ---
 
-## 9. References
+## 9. Future Features (Roadmap)
+
+### 9.1 UX: Slide Source Search & Visual Display *(In the future)*
+
+**User story:** Student wants to know which slide and which lecture covers a concept — and can see the actual slide image, not just text.
+
+**Flow:**
+1. Student asks: *"RAG nằm ở slide nào?"*
+2. Agent calls `search_slides`, retrieves chunks with metadata (source file, page, lecture date)
+3. UI reads `metadata.source` and `metadata.page` from retrieved chunks
+4. UI renders (via Streamlit `st.image` or similar):
+   - Slide thumbnail / rendered page image
+   - Caption: **"Lecture 3 — 2026-03-15, trang 12"**
+   - Link to full PDF
+
+**Implementation notes:**
+- During ingestion, also render each PDF page to PNG and store alongside ChromaDB (`data/slide_images/lecture-03/page-12.png`)
+- `search_slides` tool returns metadata JSON alongside text so UI can resolve image paths
+- Requires a lightweight image rendering step in `ingest.py` (e.g. `pdf2image` or `pymupdf`)
+
+---
+
+### 9.2 Knowledge Review Mode *(In the future)*
+
+A structured, multi-step agent flow that helps students actively review and consolidate knowledge.
+
+**Agent Flow Diagram:**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    KNOWLEDGE REVIEW FLOW                        │
+└─────────────────────────────────────────────────────────────────┘
+
+[1] PLAN
+    Agent pulls all relevant chunks from ChromaDB
+    → Summarizes & clusters key concepts by topic
+    → Drafts a review plan: "Today we'll cover: RAG, Embeddings, Agents"
+         |
+         v
+[2] CONFIRM
+    Agent presents review plan to student
+    → Student approves, adjusts scope, or removes topics
+         |
+         v
+[3] SUMMARIZE
+    Agent generates concise knowledge summaries per topic
+    → Bite-sized explanations, key definitions, visual metaphors
+         |
+         v
+[4] GENERATE QUESTIONS
+    Agent generates quiz questions (mix of MCQ, short answer, fill-in-the-blank)
+    → Calibrated to student level + topics confirmed in step [2]
+         |
+         v
+[5] STUDENT FEEDBACK
+    Student answers questions or flags "too easy" / "too hard" / "unclear"
+         |
+    ┌────┴────┐
+    | Correct | → Reinforce with brief explanation → next question
+    | Wrong   | → Explain concept → regenerate variant question on same topic
+    └─────────┘
+         |
+         v
+[6] RENDER OUTPUT
+    Agent determines display format based on question types:
+    → MCQ: radio buttons / interactive JS widget
+    → Short answer: text input + model answer reveal
+    → Flashcard: flip card animation
+    Agent generates .js / HTML component for Streamlit to embed
+         |
+         v
+[7] WRAP-UP
+    Agent provides performance summary:
+    → Topics mastered vs. needs review
+    → Suggested next review session focus
+```
+
+**Key design decisions:**
+- Steps [1]→[2] require user confirmation before proceeding (no silent assumptions)
+- Step [5] loop allows unlimited retries per topic before moving on
+- Step [6] output format is determined dynamically — agent reasons about which format fits each question type
+- All state (plan, summaries, Q&A history) stored in session state for continuity
+
+---
+
+### 9.3 Learning Mode *(In the future)*
+
+A guided, Socratic mode where the AI helps students **think through** concepts rather than giving direct answers.
+
+**Core principle:** AI reveals knowledge progressively — ask before tell.
+
+**Behavior:**
+- When student asks "How does RAG work?", instead of explaining directly:
+  1. Agent asks: *"Bạn đã biết embedding là gì chưa?"*
+  2. Student answers → Agent builds on their existing understanding
+  3. Agent uses analogies, hints, leading questions
+  4. Full explanation only after student demonstrates partial understanding
+
+**Contrast with default mode:**
+
+| | Default Q&A Mode | Learning Mode |
+|---|---|---|
+| Student asks | Agent answers directly | Agent asks back first |
+| Pace | Fast | Slow, deliberate |
+| Goal | Information retrieval | Deep conceptual understanding |
+| Outcome | Student gets answer | Student builds mental model |
+
+---
+
+## 10. References
 
 - [12 - LangChain Agents Docs](../../references/12-langchain-agents-docs.md) — `create_agent` API
 - [13 - ChromaDB Integration](../../references/13-langchain-chroma-integration.md) — Vector storage setup
