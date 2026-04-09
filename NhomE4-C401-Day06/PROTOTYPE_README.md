@@ -567,3 +567,11 @@ A guided, Socratic mode where the AI helps students **think through** concepts r
 - [14 - Chunking Strategies](../../references/14-chunking-strategies-for-rag.md) — RecursiveCharacterTextSplitter
 - [15 - ArXiv Retriever](../../references/15-arxiv-retriever.md) — Academic paper search
 - Day 4 Course Material (`prompt_engineering.md`) — System prompt anatomy, tool schema design
+
+## 11. Phân công
+| Thành viên | Phần | Output |
+|-----------|------|--------|
+| An | Canvas + failure modes | spec/spec-final.md phần 1, 4 |
+| Bình | User stories 4 paths + prompt engineering | spec/spec-final.md phần 2, prototype/prompt-tests.md |
+| Châu | Eval metrics + ROI + demo slides | spec/spec-final.md phần 3, 5, demo/slides.pdf |
+| Dũng | UI prototype + demo script | prototype/, demo/demo-script.md |
