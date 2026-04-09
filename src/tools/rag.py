@@ -1,62 +1,18 @@
-'''
-"""RAG Tool — queries ChromaDB for course slide content."""
-
-from langchain_core.tools import tool
-
-
-@tool
-def search_slides(query: str) -> str:
-    """Search course lecture slides for relevant content about AI concepts,
-    theory, and examples. Use this when students ask about course material.
-    Do NOT use for external library docs or current events."""
-    # TODO (Teammate): Implement ChromaDB retrieval
-    # Suggested approach:
-    #   from langchain_chroma import Chroma
-    #   from langchain_openai import OpenAIEmbeddings
-    #   1. Load persisted ChromaDB from ./chroma_db/
-    #      embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
-    #      vector_store = Chroma(persist_directory="./chroma_db/",
-    #                            embedding_function=embeddings)
-    #   2. retriever = vector_store.as_retriever(search_kwargs={"k": 3})
-    #   3. docs = retriever.invoke(query)
-    #   4. Format results: "[source p.N]\ncontent" for each doc
-    # Reference: references/13-langchain-chroma-integration.md
-    return "TODO: Chua implement — can ket noi ChromaDB retriever."
-"""
-RAG Tool Module
-Giao tiếp với Vector Database (ChromaDB/Qdrant) để lấy content khóa học.
-
-def retrieve_from_slide(query: str, top_k: int = 3) -> str:
-    
-    Nhúng câu hỏi (Embed) và quét trên VectorDB để lấy top chunks context.
-    
-    Args:
-        query (str): Câu hỏi/Từ khóa liên quan đến slide.
-        top_k (int): Số lượng chunk muốn lấy.
-        
-    Returns:
-        str: Chuỗi văn bản chứa thông tin khóa học.
-    
-    # TODO: Embedding query
-    # TODO: Tìm kiếm similarity trên VectorDB
-    # TODO: Kết hợp kết quả
-    
-    return "Dummy context retrieved from Slide."
-
-"""
-'''
+"""RAG Tool — Trích xuất kiến thức tập bài giảng dùng NVIDIA AI Endpoints."""
 
 import os
+import glob
+import re
+from typing import List, Dict
 from dotenv import load_dotenv
+
 from langchain_core.tools import tool
-from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain_nvidia_ai_endpoints import ChatNVIDIA
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.retrievers import BM25Retriever
-from langchain.retrievers import EnsembleRetriever
-from langchain_community.cross_encoders import HuggingFaceCrossEncoder
-from langchain.retrievers.document_compressors import CrossEncoderReranker
-from langchain.retrievers import ContextualCompressionRetriever
+from langchain_classic.retrievers import EnsembleRetriever
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
@@ -64,93 +20,116 @@ from langchain_core.documents import Document
 
 load_dotenv()
 
-# Global variable to hold our compiled pipeline so the tool can access it
+# Global variable to hold our compiled pipeline
 _GLOBAL_RAG_CHAIN = None
 
-# ---------------------------------------------------------
-# Step 1: Simulate Reading Teammates' Extracted Data
-# ---------------------------------------------------------
-def load_parsed_pdf_data(mock_filepath: str):
-    """
-    Simulates reading the output from your teammates' PDF parsing tool.
-    Ideally, they provide a list of dictionaries with text and metadata.
-    """
-    print(f"Loading extracted data from: {mock_filepath}...")
-    # In reality, this might be: json.load(open(mock_filepath))
-    return [
-        {"text": "The Error Code ER-404 means the database connection timed out.", "page": 1, "section": "Troubleshooting"},
-        {"text": "To fix a leaking pipe, turn off the water main and apply Teflon tape.", "page": 2, "section": "Maintenance"},
-        {"text": "Our Q3 revenue grew by 15% to reach $5.2 million.", "page": 3, "section": "Financials"},
-        {"text": "If you encounter a timeout error, check your network firewall settings.", "page": 1, "section": "Troubleshooting"}
-    ]
 
 # ---------------------------------------------------------
-# Step 2: Build the RAG Engine (Ingestion + Setup)
+# Step 1: Load Real Data from src/dataset/*.md
 # ---------------------------------------------------------
-def initialize_knowledge_base(parsed_data):
+def load_dataset_slides(dataset_dir: str):
     """
-    Takes the parsed data, chunks it, embeds it, and builds the Hybrid+Reranker pipeline.
-    This should run ONCE when your app starts.
+    Quét toàn bộ file .md trong dataset, cắt theo Slide marker (---)
+    và gán metadata (tên file, số trang).
+    """
+    all_docs = []
+    md_files = glob.glob(os.path.join(dataset_dir, "*.md"))
+
+    if not md_files:
+        print(f"⚠️  Không tìm thấy file .md nào trong {dataset_dir}")
+        return []
+
+    print(f"📂 Đang nạp dữ liệu từ {len(md_files)} bài học...")
+
+    for file_path in md_files:
+        filename = os.path.basename(file_path).replace(".md", "")
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Tách theo Slide marker
+        slides = content.split("---")
+
+        for slide_text in slides:
+            slide_text = slide_text.strip()
+            if not slide_text:
+                continue
+
+            # Trích xuất số trang từ "## Slide N"
+            page_match = re.search(r"## Slide (\d+)", slide_text)
+            page_num = int(page_match.group(1)) if page_match else 0
+
+            # Làm sạch header nếu cần
+            doc = Document(
+                page_content=slide_text, metadata={"source": filename, "page": page_num}
+            )
+            all_docs.append(doc)
+
+    print(f"✅ Đã nạp {len(all_docs)} slides.")
+    return all_docs
+
+
+# ---------------------------------------------------------
+# Step 2: Build the RAG Engine (NVIDIA Optimized)
+# ---------------------------------------------------------
+def initialize_knowledge_base(docs: List[Document]):
+    """
+    Index dữ liệu dùng NVIDIA Embeddings và thiết lập Hybrid Retriever + Reranker.
     """
     global _GLOBAL_RAG_CHAIN
-    
-    # 1. Convert parsed data into LangChain Document objects
-    documents = [
-        Document(
-            page_content=item["text"], 
-            metadata={"page": item["page"], "section": item["section"]}
-        ) 
-        for item in parsed_data
-    ]
 
-    # 2. Chunking
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=150, chunk_overlap=20)
-    chunks = text_splitter.split_documents(documents)
+    if not docs:
+        print("❌ Không có dữ liệu để khởi tạo Knowledge Base.")
+        return
 
-    # 3. Embedding & Retrieval (Hybrid Search)
-    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-    dense_retriever = FAISS.from_documents(chunks, embeddings).as_retriever(search_kwargs={"k": 4})
-    
+    # 1. Chunking (Recursive)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    chunks = text_splitter.split_documents(docs)
+
+    # 2. Embedding & Retrieval (HuggingFace Local + FAISS + BM25)
+    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+    dense_retriever = FAISS.from_documents(chunks, embeddings).as_retriever(
+        search_kwargs={"k": 5}
+    )
+
     sparse_retriever = BM25Retriever.from_documents(chunks)
-    sparse_retriever.k = 4
+    sparse_retriever.k = 5
 
     hybrid_retriever = EnsembleRetriever(
         retrievers=[dense_retriever, sparse_retriever], weights=[0.5, 0.5]
     )
 
-    # 4. Refinement (Cross-Encoder Re-ranker)
-    cross_encoder = HuggingFaceCrossEncoder(model_name="BAAI/bge-reranker-base")
-    compressor = CrossEncoderReranker(model=cross_encoder, top_n=2)
-    compression_retriever = ContextualCompressionRetriever(
-        base_compressor=compressor, base_retriever=hybrid_retriever
-    )
+    # 3. ChatNVIDIA Setup
+    # Sử dụng model openai/gpt-oss-120b với API Key NVIDIA
+    llm = ChatNVIDIA(model="openai/gpt-oss-120b", temperature=0.1, max_tokens=2048)
 
-    # 5. The Generation Chain
-    llm = ChatOpenAI(model="gpt-4o", temperature=0)
     prompt = ChatPromptTemplate.from_template("""
-    Answer the user's question using ONLY the context provided below. 
-    Include the section and page number in your answer if available.
-    
+    Bạn là một trợ giảng AI chuyên về khóa học AI cơ bản. 
+    Hãy sử dụng nội dung context dưới đây để trả lời câu hỏi của sinh viên.
+    Nếu không có trong context, hãy thành thật trả lời là bạn không biết.
+    Luôn ghi rõ nguồn (Tên bài & Slide) khi trích dẫn.
+
     Context:
     {context}
 
-    Question: {question}
+    Câu hỏi: {question}
     """)
 
     def format_docs(docs):
-        # Format documents to include metadata for the LLM
-        return "\n\n".join(
-            f"[Page {doc.metadata.get('page')}, {doc.metadata.get('section')}]: {doc.page_content}" 
-            for doc in docs
-        )
+        formatted = []
+        for doc in docs:
+            src = doc.metadata.get("source", "N/A")
+            pg = doc.metadata.get("page", "N/A")
+            formatted.append(f"[Nguồn: {src}, Slide {pg}]\n{doc.page_content}")
+        return "\n\n---\n\n".join(formatted)
 
     _GLOBAL_RAG_CHAIN = (
-        {"context": compression_retriever | format_docs, "question": RunnablePassthrough()}
+        {"context": hybrid_retriever | format_docs, "question": RunnablePassthrough()}
         | prompt
         | llm
         | StrOutputParser()
     )
-    print("Knowledge base initialized successfully!")
+    print("🚀 Hệ thống RAG NVIDIA đã sẵn sàng!")
+
 
 # ---------------------------------------------------------
 # Step 3: Define the LangGraph Tool
@@ -158,44 +137,38 @@ def initialize_knowledge_base(parsed_data):
 @tool
 def search_pdf_knowledge(query: str) -> str:
     """
-    Use this tool to search the internal PDF knowledge base. 
-    Pass a specific, detailed question as the query.
+    Search thông tin trong tập slide bài giảng (B1-B5).
+    Dùng công cụ này khi sinh viên hỏi về lý thuyết, ví dụ hoặc các khái niệm trong bài học.
     """
     if _GLOBAL_RAG_CHAIN is None:
-        return "Error: The knowledge base has not been initialized."
-    
-    # Execute the RAG pipeline
+        return "Error: Hệ thống RAG chưa được khởi tạo."
+
+    # Thực hiện search và lấy kết quả
     return _GLOBAL_RAG_CHAIN.invoke(query)
 
+
 # ---------------------------------------------------------
-# Step 4: Run the Prototype
+# Step 4: Run Test
 # ---------------------------------------------------------
 if __name__ == "__main__":
-    # 1. Load the data (teammates' output)
-    extracted_data = load_parsed_pdf_data("mock_output.json")
-    
-    # 2. Ingest data and build the pipeline
-    initialize_knowledge_base(extracted_data)
-    
-    # 3. The LLM Agent will now be able to call this tool in LangGraph!
-    # Here is what happens when the tool is called:
-    test_query = "What does ER-404 mean, and where can I find info about it?"
-    print(f"\nAgent calling tool with query: '{test_query}'")
-    
-    result = search_pdf_knowledge.invoke({"query": test_query})
-    print(f"\nTool Output:\n{result}")
+    # 1. Load dữ liệu thật từ src/dataset
+    dataset_path = os.path.join(os.path.dirname(__file__), "..", "dataset")
+    extracted_docs = load_dataset_slides(dataset_path)
 
+    # 2. Khởi tạo pipeline
+    initialize_knowledge_base(extracted_docs)
 
-# Add Chunk piece citation 
-#   Ingestion: We stored {"page": item["page"], "section": item["section"]} alongside the text.
-#   Formatting: The format_docs function grabbed that metadata so the LLM could "see" which page it was reading from.
+    # 3. Test Query
+    test_query = "Sự khác biệt chính giữa Chatbot và Agent là gì?"
+    print(f"\n💬 Query: '{test_query}'")
 
-# Embedding information
-#   We used OpenAIEmbeddings(model="text-embedding-3-small") to convert the text chunks into vectors.
-#   FAISS then built a vector index for fast semantic search.
-#   BM25Retriever handles keyword-based search.
-#   EnsembleRetriever combines both for optimal recall.
-#   CrossEncoderReranker re-ranks the results for better accuracy.
-#   ContextualCompressionRetriever applies the re-ranker to the retrieved documents.
-#   The final RAG chain combines retrieval, re-ranking, and LLM generation for accurate, context-aware answers.
+    # Test streaming với RAG Chain
+    print("\n🤖 Assistant (RAG Streaming with Potential Reasoning):")
 
+    full_response = ""
+    # Streaming từ chuỗi RAG để đảm bảo truy xuất (retrieval) được thực thi
+    for chunk in _GLOBAL_RAG_CHAIN.stream(test_query):
+        print(chunk, end="", flush=True)
+        full_response += chunk
+
+    print("\n\n✅ Done.")
