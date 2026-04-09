@@ -2,7 +2,7 @@
 
 **Project:** AI Tutor for VinUniversity's "AI in Action" (C401) course
 **Date:** 2026-04-09
-**Status:** Approved
+**Status:** Implemented
 
 ---
 
@@ -90,11 +90,11 @@ flowchart TD
 Streamlit Chat UI
        |
        v
-create_agent("openai:gpt-5-mini", tools=[...], prompt=system_prompt)
+create_agent("openai:gpt-4o-mini", tools=[...], system_prompt=SYSTEM_PROMPT)
        |
        |-- search_slides    -> ChromaDB (local, persisted) — chunks with rich metadata 
        |-- search_web       -> Tavily API
-       |-- fetch_assignment -> GitHub REST API (README only)
+       |-- fetch_assignment -> GitHub REST API (README only) [scaffold]
        |-- search_arxiv     -> ArXiv Retriever
        |
        +-- LangSmith (tracing, automatic)
@@ -117,18 +117,20 @@ create_agent("openai:gpt-5-mini", tools=[...], prompt=system_prompt)
 
 ```
 src/
-├── app.py                  # Streamlit chat UI (scaffold + TODO)
+├── app.py                  # Streamlit chat UI (implemented)
 ├── agent.py                # create_agent + system prompt + tool wiring (implemented)
-├── ingest.py               # PDF -> chunk -> embed -> ChromaDB (scaffold + TODO)
+├── ingest.py               # Slide .md -> chunk -> embed -> ChromaDB (implemented)
 ├── tools/
-│   ├── rag.py              # search_slides — queries ChromaDB retriever (scaffold + TODO)
-│   ├── web_search.py       # search_web — Tavily (scaffold + TODO)
+│   ├── __init__.py         # Re-exports ALL_TOOLS for agent.py
+│   ├── rag.py              # search_slides — queries ChromaDB retriever (implemented)
+│   ├── web_search.py       # search_web — Tavily (implemented)
 │   ├── github.py           # fetch_assignment — GitHub README (scaffold + TODO)
-│   └── arxiv_search.py     # search_arxiv — ArXiv papers (scaffold + TODO)
-├── data/
-│   └── slides/             # Drop PDF files here
+│   ├── arxiv_search.py     # search_arxiv — ArXiv papers (implemented)
+│   └── slide_output/       # Parsed slide data (B1-B5.md)
 ├── chroma_db/              # Persisted vector DB (gitignored)
 └── .env                    # API keys (OPENAI_API_KEY, TAVILY_API_KEY, GITHUB_TOKEN)
+tests/
+└── test_agent.py           # Unit tests (14 passing)
 ```
 
 ---
@@ -139,27 +141,28 @@ src/
 
 The central piece that wires everything together.
 
-**Tech:** `create_agent` from `langchain` with GPT-5-mini
+**Tech:** `create_agent` from `langchain` with GPT-4o-mini
 
 **Responsibilities:**
 - Load system prompt
-- Register all 4 tools
-- Configure max iterations (5) to prevent infinite loops
+- Register all 4 tools via `ALL_TOOLS` from `tools/__init__.py`
+- Configure `recursion_limit=5` via `.with_config()` to prevent infinite loops
 - Return a compiled agent that Streamlit can call via `.invoke()` or `.stream()`
 
 **Interface:**
 
 ```python
 from langchain.agents import create_agent
+from tools import ALL_TOOLS
 
 def create_tutor_agent():
     """Returns a compiled agent ready to be invoked."""
     agent = create_agent(
-        "openai:gpt-5-mini",
-        tools=[search_slides, search_web, fetch_assignment, search_arxiv],
-        prompt=SYSTEM_PROMPT,
+        "openai:gpt-4o-mini",
+        tools=ALL_TOOLS,
+        system_prompt=SYSTEM_PROMPT,
     )
-    return agent
+    return agent.with_config({"recursion_limit": 5})
 ```
 
 ### 4.2 System Prompt — Implemented by Huy
@@ -233,36 +236,36 @@ You have access to the following tools:
 </output_format>
 ```
 
-### 4.3 Ingestion Pipeline (`ingest.py`) — Scaffold + TODO
+### 4.3 Ingestion Pipeline (`ingest.py`) — Implemented
 
-**Purpose:** Parse course PDF slides (including images/diagrams), chunk, embed, and store in ChromaDB. Run once after adding or updating slides.
+**Purpose:** Load parsed slide `.md` files, chunk, embed, and store in ChromaDB. Run once after adding or updating slides.
 
-**Tech:** Teammate decides PDF parsing approach. Suggested defaults:
+**Tech:**
 - `RecursiveCharacterTextSplitter` — chunk_size=500, chunk_overlap=50
 - `OpenAIEmbeddings` — model: text-embedding-3-small
-- `Chroma` — persist_directory="./chroma_db/"
+- `Chroma` — collection_name="course_slides", persist_directory="src/chroma_db/"
 
 **Flow:**
-1. Scan `data/slides/` for `*.pdf`
-2. For each PDF: extract text (+ images/diagrams — approach TBD by teammate)
-3. Chunk with RecursiveCharacterTextSplitter
-4. Tag each chunk with **rich metadata**:
+1. Scan `tools/slide_output/` for `*.md` files (B1-B5)
+2. Split each file by `---` slide markers, extract slide number from `## Slide N`
+3. Tag each slide as a `Document` with metadata:
    ```python
    {
-       "source": "lecture-03-rag-fundamentals.pdf",  # source file name
-       "page": 12,                                   # slide/page number within PDF
-       "lecture_date": "2026-03-15",                 # date of the lecture
-       "lecture_index": 3,                           # lecture number (slide thứ mấy)
+       "source": "B1",   # source file name
+       "page": 12,       # slide number
    }
    ```
-5. Embed all chunks with OpenAI
-6. Store in ChromaDB on disk
+4. Chunk with RecursiveCharacterTextSplitter
+5. Embed all chunks with OpenAI text-embedding-3-small
+6. Store in ChromaDB on disk (581 chunks from 330 slides)
 
-**Usage:** `python ingest.py`
+**Usage:** `cd src && python ingest.py`
 
-### 4.4 RAG Tool (`tools/rag.py`) — Scaffold + TODO
+**Future:** Add `lecture_date` and `lecture_index` to metadata for richer citations.
 
-**Purpose:** Query ChromaDB at runtime to retrieve relevant slide chunks, returning both content and full metadata.
+### 4.4 RAG Tool (`tools/rag.py`) — Implemented
+
+**Purpose:** Query ChromaDB at runtime to retrieve relevant slide chunks. The tool only retrieves — the agent handles reasoning and synthesis.
 
 **Interface:**
 
@@ -271,20 +274,23 @@ You have access to the following tools:
 def search_slides(query: str) -> str:
     """Search course lecture slides for relevant content about AI concepts,
     theory, and examples. Use this when students ask about course material.
-    Returns content with source metadata (lecture date, slide number, file name).
     Do NOT use for external library docs or current events."""
-    # Load persisted ChromaDB
-    # retriever = vector_store.as_retriever(search_kwargs={"k": 3})
-    # docs = retriever.invoke(query)
-    # Format each doc:
-    #   "[Lecture {lecture_index}, p.{page} — {lecture_date} | {source}]\n{content}"
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+    vector_store = Chroma(
+        collection_name="course_slides",
+        persist_directory=_PERSIST_DIR,
+        embedding_function=embeddings,
+    )
+    retriever = vector_store.as_retriever(search_kwargs={"k": 3})
+    docs = retriever.invoke(query)
+    # Returns formatted: "[source, Slide N]\ncontent" for each doc
 ```
 
-The rich metadata in the returned string allows:
+The metadata in the returned string allows:
 - The agent to cite sources accurately in answers
 - *(Future)* The UI to display slide thumbnails or highlight source slides
 
-### 4.5 Web Search Tool (`tools/web_search.py`) — Scaffold + TODO
+### 4.5 Web Search Tool (`tools/web_search.py`) — Implemented
 
 **Purpose:** Search the web for information beyond course slides, including latest real-world applications, library docs, and debugging help.
 
@@ -295,19 +301,21 @@ The rich metadata in the returned string allows:
 ```python
 @tool
 def search_web(query: str) -> str:
-    """Search the web for programming knowledge, library docs, latest applications
-    of AI concepts, or topics not covered in course slides.
-    Use when the question goes beyond course material or asks about newest use cases.
+    """Search the web for programming knowledge, library docs, or topics
+    not covered in course slides. Use when the question goes beyond course material.
     Do NOT use when the answer is likely in course slides."""
-    # TODO: Initialize TavilySearchResults with api_key from env
-    # TODO: Invoke search and format results
+    search = TavilySearchResults(max_results=5, tavily_api_key=api_key)
+    results = search.invoke(query)
+    # Returns formatted: [index] URL + first 300 chars of content
 ```
 
 **Env:** `TAVILY_API_KEY`
 
 ### 4.6 GitHub Tool (`tools/github.py`) — Scaffold + TODO
 
-**Purpose:** Fetch README.md from a GitHub repo to understand assignment requirements and guide students through them.
+**Purpose:** Fetch README.md from a GitHub repo to understand assignment requirements.
+
+**Note:** A previous implementation (`fetch_github_repo`) exists in git history (commit `a2749b1`) but was reverted due to mismatched interface. It can be adapted to match this spec.
 
 **Tech:** GitHub REST API with token auth
 
@@ -327,7 +335,7 @@ def fetch_assignment(repo_url: str) -> str:
 
 **Env:** `GITHUB_TOKEN`
 
-### 4.7 ArXiv Tool (`tools/arxiv_search.py`) — Scaffold + TODO
+### 4.7 ArXiv Tool (`tools/arxiv_search.py`) — Implemented
 
 **Purpose:** Search academic papers on arXiv for research references.
 
@@ -341,40 +349,38 @@ def search_arxiv(query: str) -> str:
     """Search academic papers on arXiv for research references. Use when students
     ask about cutting-edge research or want paper citations.
     Do NOT use for practical course content or assignments."""
-    # TODO: Initialize ArxivRetriever(load_max_docs=3)
-    # TODO: Invoke retriever with query
-    # TODO: Format results: title, summary, URL for each paper
+    retriever = ArxivRetriever(load_max_docs=3)
+    docs = retriever.invoke(query)
+    # Returns formatted: [index] Title / URL / Summary (first 300 chars)
 ```
 
-**Reference:** See `references/15-arxiv-retriever.md`
-
-### 4.8 Streamlit UI (`app.py`) — Scaffold + TODO
+### 4.8 Streamlit UI (`app.py`) — Implemented
 
 **Purpose:** Minimal chat interface for students.
 
 **Components:**
 - Title: "AI Tutor — C401 AI in Action"
 - Chat history display via `st.chat_message()`
-- User input via `st.chat_input()`
-- Agent response with streaming via `st.write_stream()`
-- Session state for message persistence
+- User input via `st.chat_input("Hoi minh ve khoa hoc AI in Action...")`
+- Agent response via `agent.invoke()` with full message history
+- Session state for agent and message persistence
+- Loading spinner ("Dang suy nghi...")
 
-**Interface:**
+**Implementation:**
 
 ```python
 import streamlit as st
 from agent import create_tutor_agent
 
-# TODO: st.title
-# TODO: Initialize agent in st.session_state (once)
-# TODO: Initialize st.session_state.messages = []
-# TODO: Display chat history loop
-# TODO: Handle st.chat_input
-# TODO: Call agent.stream() and display with st.write_stream
-# TODO: Append messages to session state
+st.set_page_config(page_title="AI Tutor — C401", page_icon="🎓")
+st.title("🎓 AI Tutor — C401 AI in Action")
+
+# Agent + messages initialized in st.session_state
+# Chat history displayed via st.chat_message loop
+# User input -> agent.invoke({"messages": [...]}) -> display response
 ```
 
-**Run:** `streamlit run src/app.py`
+**Run:** `cd src && streamlit run app.py`
 
 ---
 
@@ -383,7 +389,7 @@ from agent import create_tutor_agent
 ### API Keys (`.env`)
 
 ```
-OPENAI_API_KEY=...        # GPT-5-mini + embeddings
+OPENAI_API_KEY=...        # GPT-4o-mini + embeddings
 TAVILY_API_KEY=...        # Web search
 GITHUB_TOKEN=...          # GitHub repo access
 LANGSMITH_API_KEY=...     # Tracing (optional but recommended)
@@ -439,15 +445,16 @@ arxiv
 
 ## 8. Task Ownership
 
-| Component | File | Owner |
-|---|---|---|
-| Agent core + system prompt | `agent.py` | Huy (implemented) |
-| Ingestion pipeline | `ingest.py` | Teammate (scaffold + TODO) |
-| RAG tool | `tools/rag.py` | Teammate (scaffold + TODO) |
-| Web search tool | `tools/web_search.py` | Teammate (scaffold + TODO) |
-| GitHub tool | `tools/github.py` | Teammate (scaffold + TODO) |
-| ArXiv tool | `tools/arxiv_search.py` | Teammate (scaffold + TODO) |
-| Streamlit UI | `app.py` | Teammate (scaffold + TODO) |
+| Component | File | Status | Owner |
+|---|---|---|---|
+| Agent core + system prompt | `agent.py` | **Implemented** | Huy |
+| Unit tests (14 passing) | `tests/test_agent.py` | **Implemented** | Huy |
+| Ingestion pipeline | `ingest.py` | **Implemented** | Huy |
+| RAG tool (ChromaDB) | `tools/rag.py` | **Implemented** | Huy |
+| Web search tool | `tools/web_search.py` | **Implemented** | Teammate |
+| GitHub tool | `tools/github.py` | Scaffold + TODO | Teammate |
+| ArXiv tool | `tools/arxiv_search.py` | **Implemented** | Teammate |
+| Streamlit UI | `app.py` | **Implemented** | Huy |
 
 ---
 
