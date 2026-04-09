@@ -1,0 +1,1541 @@
+--- Trang 1 ---
+AI IN ACTION
+NGÀY 5
+Thiết kế sản phẩm Al cho sự không chắc chắn
+Từ khả năng của model đến sản phẩm người dùng tin tưởng
+VinUniversity
+5
+2026
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+1/52
+Day
+--- Trang 2 ---
+Mục tiêu hôm nay
+3 câu hỏi xuyên suốt ngày:
+1.Một agent chạy được đã đủ để trở thành product chưa?
+2 Thiết kế product Al khác gì phẩn mềm truyền thống?
+3.Cải thiện liên tục nhờ feedback và data
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+4/52
+--- Trang 3 ---
+Flow buổi học
+Day 5 (08/04)
+Giờ
+Hoạt động
+Nộp
+9:00
+Mở dâu
+agent
+được # product thành
+9:15
+Al không hoàn hảo
+
+tựđộng hoá
+hỗ trợ con người?
+9.45
+3 trụ thiết kế + bài tập phân tích UX (cá nhân)
+Sketch giấy + 4 paths
+11-25
+Al Product Canvas + thực hành nhóm + review chéo
+14:00
+Feedback
++ data flywheel
+cải thiện Al liên tục
+14-30
+ROI 3 kịch bản: có nên dẩu tư Al? + hỏi đáp
+16:00
+Hackathon: nhận đề, chia nhóm; bắt đầu draft SPEC
+23h59
+Deadline 08/04
+Topic + SPEC draft
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+5/52
+công
+chạy
+hay
+loop
+--- Trang 4 ---
+Agent chạy được rồi _ vậy tại sao có thể không ai dùng?
+Sai lâm
+Thực tế
+Gắn Al cho có
+Google rắc Al lên search + user bỏ qua. Perplexity cùng tech, thiết kế lại + thắng
+Thêm Alvì FOMO; không vì user cẩn
+2
+Chỉ build 80%
+GammalTome tạo slide nhanh nhưng
+sừa quá nhiều + chậm hơn tự làm PowerPoint
+Demo ấn tượng nhưng 20% cuối mới quyết định
+3
+Nhâm khó =
+trị
+Descript dùng Al có sẵn; edit video bằng cách edit text + tạo category mới
+Không cân research mới, cẩn
+dụng sáng tạo
+Tựxây Al từ dầu
+Builder.io chỉ train
+1 model cho 1 việc; còn lại dùng OpenAl
+Build infra riêng khi platform đủ tốt
+Pattern
+công nghệ
+khác cách build product + kết
+ngược nhau:
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+6 / 52
+phải
+giá
+ứng 
+riêng
+Cùng
+quả
+--- Trang 5 ---
+Vấn dề không
+AI
+Vấndề là ta dang dối xử Al như phẩn mêm thường.
+Al capability
+Al Raced Ahead. UX Stood Still.
+UX
+Interface
+Agents
+multimodal
+ChatGPT launch
+GPT-3
+BERT / early NLP
+Still: text box
+prompt
+2012
+2018
+2020
+2023
+2025
+Siri
+Alexa: Al yếu, UX tham vọng
+ChatGPT / Claude: Al mạnh, UX chỉ chat box
+"Al có trí tuệ dáng kinh ngạc, nhưng giao diện vẫn chỉ như chatbot modem quay số AOL
+~
+Aparna Chennapragada; CPO Microsoft
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+7/ 52
+yếu.
+phải
+--- Trang 6 ---
+Activity nhanh: 5 câu hỏi
+Nghĩvề Al agent của bạn:
+1.Ai dùng?
+2 Khi đúng
+user được gì?
+3.Khi sai
+chuyện gì?
+4.Bao nhiêu % đúng là đủ?
+5.Mỗi lần chạy tốn gì?
+Nhóm
+5
+Gửi lên Discord
+Nội dung: brief về Al agent của bạn + trả Iời 5 câu hỏi
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+8/52
+phút
+--- Trang 7 ---
+Al = không chắc chắn
+cách bạn handle nó
+Phân mêm cũ chạy theo luật. Al chạy theo xác suất.
+9141
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+9/52
+--- Trang 8 ---
+Phân mềm truyền thống vs Al product
+Truyên thống
+AI
+Kết quả
+Luôn giống nhau
+Mỗi lẩn một khác
+Ví dụ
+"Số dư?"
+trả đúng số
+"Tóm tắt email này" + mỗi lần 1 bản khác
+Kiểm thử
+Đạt / không đạt
+Chạy 100 lẩn
+bao nhiêu lần "đủ tốt"?
+Lỗi
+tìm và sửa
+Sai xác suất
+không sửa được, chỉ giảm được
+không biết user sẽ tương tác thế nào; và cũng không biết LLM sẽ phản hồi ra sao. Cả ba
+input, output, process
+đều không chắc chắn:'
+Ash Reganti_Head of Al Spotify_(Lenny's Podcast)
+Takeaway
+Nếu sản phẩm
+AI,
+dang thiết kế cho uncertainty.
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+10/52
+Bug
+"Bạn
+dùng
+bạn
+--- Trang 9 ---
+Tại sao Gmail cần AI - và cái giá phải trả
+Ví dụ kinh điển: "AI
+hơn nhưng không hoàn hảo"
+Spammer
+ML
+Rules
+đổi chiêu
+Học từ triệu email,
+"chứa 'free money'
+"fr3e mOney"
+tự thích
+spam"
+gửi bằng hình ảnh
+nhưng 
+rules bó tay
+Cái
+của ML:
+Chặn nhâm
+email quan trọng bị xóa; user không hể biết
+Bỏ lọt + spam vào inbox; user thấy và tự xóa được
+Không thể triệt tiêu cả hai. Chỉ chọn cái nào ít tệ hơn:
+Alsẽ sai. Vậy 3 thứ phải -
+dổi theo 
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+11/52
+giỏi
+ứng
+giá
+thay
+--- Trang 10 ---
+Al sẽ sai
+3 thứ phải thiết kế khác
+1.Requirement
+2 UX
+3.Eval
+Trước: "Click X + Y"
+Trước: Thiết kế cho lúc đúng
+Trước: Đạt / không đạt
+Giờ: "Hỏi X + Y ~85%, dưới 60% + hỏi lại
+Giờ: Thiết kế cho lúc SAI:
+Giờ: Chạy 100 lân + bao nhiêu % "đủ tốt"?
+user
+thấy sai?
+PMquyết định, không phải QA
+(spec ngưỡng + failure behavior)
+sửa được?
+(quality distribution)
+Sai thế nào là chấp nhận được?
+tin lại được?
+Bao nhiêu % sai là chấp nhận được?
+(graceful failure + trust recovery)
+Sai thì user làm gì?
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+12/ 52
+user"
+--- Trang 11 ---
+Cách bạn deploy Al thay đổi mọi thứ
+Automation
+Al làm thay; user không thấỵ Augmentation
+AI
+ý, user
+đinh:
+Augmentation
+GitHub Copilot
+Automation
+
+Spam filter
+User không thấy email bị xóa nhẩm
+30% accuracy
+Precision cực cao bắt buộc
+9 2OM users
+False positive = mất email quan trọng
+Ghost text
+reject = 0 friction
+User không có cơ hội sửa
+Suggest-only; không auto-action
+User luôn có quyền kiểm soát
+Tại sao cùng Al mà khác nhau đến vậy? +
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+13/ 52
+quyết
+gợi
+--- Trang 12 ---
+Chuyển Al Automation và Augmentation
+1
+60%
+2
+95%
+3
+99.5%
+Duyệt
+auto
+ask
+Copilot: user duyệt
+Gửi tự động -
+~
+hôi
+Tự dộng hoàn toàn:
+duyệt
+ernail
+lại email quan trọng
+user chi set rules
+0%
+100% độ chính xác
+Automation
+Augmentation bắt buộc
+Bán tự động
+an toàn
+AUGMENTATION
+AUTOMATION
+Al gợi ý, user chọn
+Al làm
+(G
+"
+"Nếu model
+60%,
+phải build product theo cách hoàn toàn khác.
+7?
+Aa
+Ooo
+ 
+FA
+từng
+thay
+đúng
+bạn
+--- Trang 13 ---
+Trong thực tế: bắt đầu aug, tăng dân auto
+Vídụ: agent hỗ trợ khách
+VI: Routing
+V2: Copilot
+V3: Tựđộng
+Al làm:
+Al làm:
+Al làm:
+Phân loai +
+ticket đúng chỗ
+Gợi ý draft trả Iời
+Tự
+quyết ticket
+Người làm:
+Người làm:
+Người làm:
+Xử lý 100% ticket
+Review + sửa draft
+Chỉ xem edge cases
+Thu: data phân loại, cấu trúc prompt
+Thu: % draft dùng nguyên? Phẩn nào bị
+Thu: vòng lặp tự động hoàn toàn
+sửa? = eval miễn phí
+Mỗi version thu data để quyết định Iên version tiếp + không doán mò
+Nhảy thằng V3: "Chúng tôi phải đóng product vì quá nhiểu lỗi, không đếm hết các vấn đê mới phát sinh:"
+Ash Reganti & Vikram Badam (Lenny's Podcast)
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+15 / 52
+hàng
+chuyển
+giải
+--- Trang 14 ---
+3 trụ thiết kế Al product
+Yêu câu (Requirement)
+Trải nghiệm (UX) . Đánh giá (Eval)
+0) /2
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+16 / 52
+--- Trang 15 ---
+Yêu câu (Requirement): không mô tả hành vi; mô tả kết
++lúc sai thì sao
+Ví dụ: Chatbot Ngân hàng
+"Lãi suất tiết kiệm hiện tại bao nhiêu?"
+Truyền thống
+AI
+User hỏi
+User hòi
+~6.89
+Lãi suất 6.8%
+Độ chắc chắn?
+2609
+<609
+Trà lời + ghi nguồn
+"Tôi không chắc,
+Luôn
+luôn giống nhau.
++
+ngày cập nhật
+chuyển nhân viên"
+1
+đường đi.
+4 đường đi:
+1
+không chắc / sai / mất tin
+(4-path user stories)
+quả
+đúng,
+Xong
+đúng
+--- Trang 16 ---
+Các dạng lỗi thường gặp (failure mode library)
+Thay vì liệt kê tính
+liệt kê cách sản phẩm có thể sai
+Air Canada (2024): chatbot tự bịa chính sách hoàn vé + khách đòi đúng Iời bot + tòa phán: "Bot là đại diện công tỵ Phải bổi thường:"
+Al sai +
+nhỏ. Al sai =
+công ty chịu trách nhiệm.
+Vậy phải chuẩn bị trước
+liệt kê cách Al có thể sai:
+Khi nào xảy ra
+Chuyện gì xảy ra
+Xử lý thế nào
+(trigger)
+(hậu quả)
+(mitigation)
+Hỏi ngoài phạm vi: "Hoàn vé được không?"
+Bot bịa thông tin + khách làm theo + thiệt hại (Air Canada)
+Nhận ra + "Tôi không có thông tin này; để tôi
+nhân
+viên"
+Hỏi mơ hồ: "Tôi bị mất thẻ"
+Trả lời sai ngữ cảnh
+thẻ tín dụng
+thẻ thành viên? +
+Hỏi lại: "Bạn muốn hỏi về thẻ tín dụng
+thẻ thành viên?"
+hướng dẫn sai
+Dữ liệu cũ: lãi suất đã
+đổi tuẩn trước
+Trả lãi suất 7.5% (hết hạn) + khách ra quẩy + chỉ còn 5.5%
+Gắn thời gian: "Cập nhật lân cuối: 01/04. Vui
+kiểm tra
+mất tin
+lại."
+Câu hỏi then chốt
+3 cách sản phẩm của bạn có thể sai là gì?
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+18/ 52
+năng
+bug
+chuyển
+hay
+hay7
+lòng
+thay
+Top
+--- Trang 17 ---
+DISCORD
+
+5 PHÚT
+Tìm lỗi trong spec
+Chọn 1đê. Ban là product builder nhận spec này
+
+thiếu gì để build đưọc?
+ĐỂ 1
+ĐÊ 2
+ĐỂ 3
+ĐỂ 4
+Chatbot CSKH ngân hàng
+Al tómtắt meeting
+Al chấm bài luận
+Allọc CV
+viên
+"Chatbot trả lời câu hỏi khách
+vềtài
+"Altự động tóm tắt cuộc
+thành bullet
+"Alchấm điểm bài luận
+Việt của học
+"Alđoc CV ứng viên và xếp hạng phù hợp cho
+khoản, thẻ, vay Hiểu
+Việt có dấu và
+points. Bắt action items, người chịu trách
+sinh Cho điểm 1-10 kèm nhận xét
+vịtrí Loc top 20từ 500 hổ so Xửlý trong 1
+không dấu Phàn hổi trong 3 giây Hỗ trợ 24/7"
+nhiệm;, và gửi email tự động '
+Chấm xong trong 5
+giờ"
+Gợiý: user hỏi ngoài phạm vi thì sao? Bot sai
+Gợiý: gán sai
+chiu trách nhiệm? Tóm sai ý
+Gợi ý: chấm sai vì văn phong lạ? Học sinh khiếu
+Gợi ý: loại nhẩm người giỏi? Bias giói tính /
+thông tin lãi suất?
+chính?
+nai thì sao?
+trường?
+Gõ vào Discord: liệt kê 1-2cách Alcó thể sai + user story path thiếu
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+19/52
+ứng
+hàng
+họp
+tiếng
+tiếng '
+ngắn.
+phút:
+người
+--- Trang 18 ---
+Đánh giá (Eval): không phải đạt/trượt,
+mà sai bao nhiêu là chấp nhận được?
+Đạt
+AI
+100 / 100 / 100
+VS
+82 / 65 / 91
+Phần mềm truyền thống
+luôn = 1OOđ
+AI
+dao động: 65đ
+91đ
+Phân
+chất lượng (100 lần chạy)
+Nhìn 50-100
+2
+Phân loại lỗi
+3
+Viết eval từ các
+kết auả
+dana lổi lăp lai
+giá
+giá
+phối
+--- Trang 19 ---
+Sai kiểu nào tệ hơn?
+Precision (ít báo nhẩm)
+Recall (ít bỏ sót)
+Detector
+hiện khói
+Quyết định của model
+Báo Nhẩm (False Positive)
+Bỏ Sót (False Negative)
+Thực ra: chỉ nấu cơm
+Thực ra: cháy thật
+Phiên
+mất 30 giây
+Không ai biết
+Không ai
+nhưng SỐNG
+MÂT MANG
+Bỏ sót tê hơn
+ưu tiên RECALL cao
+App trẻ em: bỏ sót
+Ngân hàng: báo nhầm
+Spotify: cả hai nhẹ
+bạo lực lọt
+RECALL
+mất tiên
+PRECISION
+gợi thoải mái
+CSu hải cho DAA. |ái cản nhẩm cỉa mìnb
+caikiẩlI nào tê
+hon choucor?
+hay
+phát
+chạy
+--- Trang 20 ---
+Precision vs Recall
+tính thế nào?
+Ví dụ: Al lọc video cho app trẻ em
+
+100 videos, trong đó 10 cái xấu thật sự
+Al dánh dấu "xấu"
+Al cho qua
+Xấu thật
+8 v
+2xbò sót
+(trẻ thấy nội dung xấu)
+Lành thật
+5 x báo nhẩm
+85
+(video tốt bị gỡ oan)
+Precision = 8/13 = 62%
+Recall = 8/10 = 80%
+Al đánh dấu 13 cái "xấu"
+
+chỉ 8 cái xấu thật
+10 cái xấu thật sự, Al tìm được 8
+~
+lọt 2 cái
+4
+"Khi Al nói CÓ đúng bao nhiêu?"
+"Trong số cẩn tìm, Al tìm được bao nhiêu?"
+2 cái lọt = 2 video xấu trẻ nhìn thấỵ: 5 cái báo nhâm = 5 video tốt bị gỡ oan.
+Cái nào tệ hơn? + Lọt tệ hơn + cân recall cao.
+Nhưng đổi sang duyệt vay ngân hàng: báo nhầm = duyệt sai + mất tiền
+precision cao
+Không có đáp án chung. Tuỳ "sai kiểu nào tệ hơn cho user của mình?"
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+22/52
+--- Trang 21 ---
+Precision hay Recall? = phụ thuộc context
+User THẤY & sửa được
+User KHÔNG thấy
+Sai mà act
+PRECISION
+PRECISION
+(FP tệ
+=
+hậu quà
+VD: Legal RAG; Bank chatbot
+VD: Spam filter; Auto-send email
+hơn)
+nặng
+User thấy nhưng hậu quả nặng
+Sai mà không ai biết = nguy hiểm
+Bỏ lọt
+RECALL
+RECALL
+(FNtệ
+=
+mất giá
+VD: Copilot, FAQ chatbot
+VD: Content mod (trẻ em) , Fraud
+hon)
+trị
+Gợi ý nhiêu; user tự filter
+Bỏ lọt = thảm họa, dù user không thấy
+Rule of thumb
+Sai mà user KHÔNG BlẾT
+thường precision. Nhưng nếu bỏ lọt = thảm họa
+recall bất kể user thấy
+không.
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+23/52
+hay
+--- Trang 22 ---
+DISCORD
+
+5 PHÚT
+Precision hay recall?
+Mỗi sản phẩm nên ưu tiên precision (đừng nhâm) hay recall (đừng sót) ?
+Al lọc nội dung cho app trẻ em
+2
+Code autocomplete (kiểu Copilot)
+3
+Alđọc X-quang phát hiện ung thư
+0
+Al duyệt khoản vay
+hàng
+5
+Al goi ý bài hát (Spotify)
+Gõ vào Discord: số-P hoặc R -lý do 1 câu
+Vídu: 1-R
+1
+vìbỏ sót = trẻ thấy nội dung xấu
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+24/52
+ngân
+--- Trang 23 ---
+4 câu mọi Al product phải trả lời
+Câu hỏi
+Ví dụ: Copilot
+Khi đúng
+user
+thấy gì?
+Gợi code màu xám
+bấm Tab để chấp nhận
+2
+Khi không chắc + hệ thống làm gì?
+Gợi
+hơn; ít tự tin hơn
+user tự viết tiếp
+3
+Khi sai
+user sửa thế nào?
+Tiếp tục gõ = gợi ý biến mất Cost = 0
+4
+Khi mất tin + gỡ thế nào?
+Tắt Copilot cho file này / ngôn ngữ nàỵ. Bật lại khi muốn.
+Tại sao Copilot 30% accuracy mà 2OM người dùng?
+Vì cả 4 câu dêu có câu trả lời tốt. Sai
+không mất gì. Đúng
+tiết kiệm thời gian.
+Microsoft
+(2016): không trà lời được câu nào + bị troll thành racist bot trong vài giờ.
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+25 / 52
+ngắn
+Tay
+--- Trang 24 ---
+Khi Al sai: xử lý nhẹ nhàng (graceful failure) + giữ niêm tin (trust recovery)
+Xừlv loinhe nhang
+Giữnicm tin
+Đưa nhiêu lựa chọn;
+Giải thích tại sao:
+0
+không chỉ 1đáp án
+Grammarly: "Wordiness
+thử 'thrilled'
+happy"
+4 user
+hiểu lý do + tin và học theo
+Cho user sửa được
+Hiện độ chắc chắn:
+Kayak: "Advice: MUA
+Confidence: 79%"
+Ghi nhận đã sửa
+user tự quyết
+> Alhọc từđó
+Cho lựa chọn khác
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+26 / 52
+thay
+'very
+--- Trang 25 ---
+4 thành
+phân giao diện mới cho Al
+Aparna Chennapragada; CPO Microsoft
+1
+Bước 1
+^
+Viết bài thơ
+Bước 2
+0oo
+Đổi màu
+1
+Bước 3
+ẵ
+Đang
+15 nguồn
+1
+^
+Thử style khác
+Lên kế hoạch
+^
+^
+Sửa
+60%
+PROMPT
+EDITABLE PLAN
+SHOWING WORK
+FOLLOW-UP
+Gợi ý cách bắt đầu
+Kế hoạch user sửa được
+Hiển thị
+trình vừa đủ
+Gợi ý bước tiếp chủ động
+7
+"Quá dài dòng = cron job. Quá ngắn gọn
+=
+không biết Al đi đúng hướng không:
+Aparna Chennapragada; CPO Microsoft
+đọc
+quá
+--- Trang 26 ---
+CÁ NHÂN
+
+40 PHÚT
+
+10 ĐIỂM
+Bài tập UX: phân tích sản phẩm Al thật
+Chọn 1 sản phẩm + dùng thử
+phân tích 4 paths > sketch cải thiện + chia sẻ + vote
+CHỌN
+SẢN PHẨM
+MoMo
+
+Trợ thủ Al Moni
+VN Airlines
+
+Chatbot NEO
+"
+Trợ lý ảo V-Al
+Phân loai chi tiêu tự động; chatbot tài chính cá nhân App MoMo.
+Chatbot hỗ trợ KH, tra cứu
+'chuyến |
+vietnamairlines com hoặc
+Trợ lý voiceltext, gợi ý theo context App V-App.
+Zalo VNA:
+15
+10'
+10'
+5'
+Khám phá
+Phân tích 4 paths
+Sketch to-be
+Share + vote
+Tìm hiểu marketing
+Đúng
+user
+thấy gì?
+Chon 1 path yếu nhất
+Chia sè trong nhóm
+rổi
+thử app
+Không chắc
+7
+hỏi lai?
+Vẽ as-is (trái) + to-be (phải)
+Mỗi =
+30 giây
+Marketing khớp thực tế?
+Sai + sừa thế nào?
+Thêm gì? Bớt gì? Đổi gì?
+Vote sketch hay nhất + bonus
+Mẩt tin > có exit?
+Nộp cá nhân: sketch giấy (as-is + to-be) + ghi chú 4 paths Điểm cá nhân 1Ođ. Vote = bonus 2đ.
+Nice to have: screenshot app + annotate chỗ
+/chỗ gãỵ
+Đê bài chi tiết: github.com[VinUni-AIZOkIDayo5-AI-Product-Labs
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+28/52
+V-App-
+bay.
+dùng
+người
+hay
+--- Trang 27 ---
+Debrief: kết nối 3 trụ
+Requirement: spec thiếu gì? (Discord A
+
+4 specs đều thiếu
+pattern)
+Eval: precision
+recall? (Discord C _ phụ thuộc context; không
+kỹ thuật)
+UX: path nào yếu nhất? (Workshop
+sản phẩm thật đêu có gap)
+3 trụ không độc lập:
+AutoJAug
+Requirement khác
+UX khác
+Eval khác
+Đây là vòng tròn, không phải đường thẳng:.
+Tiếp theo: Canvas
+gom requirement + UX + eval thành 1 trang product spec.
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+29/52
+cùng
+phải
+hay
+--- Trang 28 ---
+Canvas: gom lại thành lightweight spec
+Gộp 3 trụ thành 1 trang product spec
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+31/52
+9) 8)
+--- Trang 29 ---
+Al Product Canvas
+3 cột
+VALUE
+TRUST
+FEASIBILITY
+User nào? Pain nào?
+Precision
+recall?
+Cost / latency?
+Auto
+Aug?
+Khi sai + user biếtJsửa thế nào?
+Dependency
+risk chính?
+Value khi Aldúng?
+Trust recovery?
+Learning Signal (Block 4): (1) User sửa Al + data đi vào dâu? (2) Đang tốt lên
+tệ đi? (3) Càng nhiều data càng tốt?
+Vídụ: Chatbot CSKH ngân hàng
+VALUE
+TRUST
+FEASIBILITY
+User: KH hỏi tài khoản; thẻ, vay
+Precision cao: sai = mất tiền (Air Canada)
+Cost: ~$0.02/lượt GPT-4o
+Pain: chờ
+đài 10-15 phút
+Khi sai: "Để tôi
+chuyển NV"
+Latency: <3 giây
+Aug: bot gợi ý, NV xử lý phức tạp
+Recovery: "Xin lỗi, NV sẽ liên hệ lại"
+Risk: lãi suất cũ + sai thông tin
+Value: trả Iời 24/7
+Dep: API ngân hàng real-time
+Learning Signal: 0
+mỗi lẩn chuyển NV + lý do
+% câu hỏi bot tự
+quyết (tuẩnltuẩn)
+Mỗi lẩn chuyển NV = 1vídụ train thêm
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+32/ 52
+hay
+hay
+hay
+tổng
+giài
+Log
+--- Trang 30 ---
+Nhóm sketch Canvas outline
+Sketch Canvas cho project của nhóm
+Chua cân đầy đủ
+~
+đánh dấu [?] cho chưa biết
+Sketch (15 min) + Peer peek (10 min)
+Nhóm
+25 phút
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+33/52
+--- Trang 31 ---
+Feedback Loop
+Data Flywheel
+Sau khi launch; sản phẩm phải
+hoặc sẽ xuống cấp.
+74
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+34/52
+học
+--- Trang 32 ---
+Feedback loop: truyền thống vs Al
+Truyền thống
+thể)
+Al (sinh vật)
+Bản chất
+Vật thể tĩnh
+xuất xong = xong
+Sinh vật sống 
+
+xuất xong = mới bắt đẩu
+Phản hôi
+Thủ công; theo sprintJquý
+Liên tục, tựđộng
+Cải thiện
+Team phân tích data
+cập nhật
+Model tựhọc từ tương tác
+Tài sản riêng
+Tính năng, thương hiệu; mạng lưới
+Vòng data + model tinh chỉnh
+Thu thập
+Lặp lại
+Phân tích
+Cải tiến
+Thu data từ tương
+Nhiêu luông song
+Đánh giá, A/B test
+Tinh chỉnh; nâng cấp
+tác
+song
+Hiệu
+Alexa: User hòi 3 lẩn, Al sai cả 3 + ngừng dùng vĩnh viễn Không phản hổi =
+không cài thiện:
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+35 / 52
+(vật ~
+ứng
+--- Trang 33 ---
+3 loại feedback signal
+Sản phẩm Al cẩn thu signal từ user để cải thiện. 3 cách thu:
+Ngâm (implicit)
+Trực tiếp (explicit)
+Sửa lỗi (correction)
+User không cố ý phản hổi
+hệ thống tựthu:
+User chủ động đánh giá:
+User trực tiếp sửa kết quả Al:
+Thời gian xem; cuộn trang; bỏ qua
+Thích / không thích (thumbs upldown)
+Sửa text Al viết, đánh dấu sai
+Chấp nhận / từ chối gợi ý
+Đánh giá sao, báo cáo; dánh dấu
+Ghi dè quyết dịnh của Al
+VD: Copilot đo % Tab (chấp nhận) vs Esc (bỏ qua)
+VD: ChatGPT
+nút
+mỗi câu trả lời
+VD: Grammarly
+user bỏ gợi ý = "sai"
+VD: YouTube do thời gian xem > click
+VD: MoMo
+
+"Phân loai này dúng không?"
+VD: Gmail Smart Reply
+user sửa rổi gửi
+Câuhỏi cho SPEC: sản phẩm của bạn thu signal loại nào? Nếu chưa có + thiết kế ngay từ đẩu.
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+36 / 52
+--- Trang 34 ---
+Data Flywheel
+Data Flywheel
+MidJourney
+Vòng lặp Data Flywheel
+Người
+Đánh giá ảnh
+Mô hình học
+tạo ảnh
+đẹp/xấu
+Ánh
+hơn
+Người
+sử
+Thêm
+drung
+Thêm đánh giá
+Thêm
+4
+Thêm đánh giá
+Microsoft Dragon
+Phiên bản VI
+Phiên bản V2
+Phiên bản V3
+Người
+Sản phẩm tốt
+tạo dữ liệu khi
+hơn
+thu hút
+Nguồn dữ liệu
+Dữ liệu
+60OK ca thực tế +
+Liên tục tối ưu
+sỬ
+thêm người
+chuyên gia đánh giá
+Độ chính xác
+30-60%
+~75%
+83%
+Al học từ dữ
+Dữ liệu
+9
+Dữ liệu thật +
+Bác sĩ
+hàng ngày
+Kết
+liệu
+mô hình
+kểt
+tệ
+đánh gíá +
+vọt
+data mới mỗi ngày
+tốt hơn
+Loop liện tực: dữ liệu mới + fine-tune + tốt hon nữa + thêm dữ liệu
+Sai lầm phá vỡ Flywheel
+Không thiết kế thu dữ liệu từ đầu
+Thu sai thứ
+Thu rồi nhưng không dưa về model
+không có nút "sailđúng" cho user bấm
+chỉ đẽm lượt
+không thu user sửa Al chỗ nào
+log đầy nhưng không ai dùng để cái thiện
+Takeaway: Al ai
+dùng được (commodity) . Chỉ dữ liệu
++ cách
+riêng
+=
+lợi thế thật.
+Instructor: [Tên aiàna viên]
+Alin Action - Dav 05
+37 / 52
+dùng
+đẹp
+dùng
+dụng
+người
+người
+dùng
+dùng
+ tống
+hợp
+dụng
+dùng
+giả
+người
+dùng 
+quả
+quá
+nhảy
+dùng,
+cũng
+riêng
+dùng
+--- Trang 35 ---
+Consố dẹp chưa dủ _
+biết sai ở dâu
+Định tính trước, định lượng sau
+Al phân loại email: 87% dúng -
+
+nghe ổn? Nhưng 13% sai ở đâu?
+Email FYI phân loại nhẩm
+Email từ khách VIP phân loại nhẩm vào "spam'
+Phiền, không sao
+Mất deal 500 triệu
+Cùng 13% sai
+nhưng hậu
+khác nhau hoàn toàn.
+Phải nhìn LỖI CỤ THỂ trước khi nhìn CON SỐ.
+4 cách cải tiến (dùng trong hackathon):
+1.Sửa prompt
+2 Sửa dữ liệu
+Viết rõ hơn, bớt mập mờ
+Thêm data đúng; bớt data nhiễu
+VD: "Phân loại email thành 3 loai: urgent / action / FYI" thay vì "phân loại email"
+VD: thêm 50 email mẫu từ khách VIP để Al nhận diện pattern
+3.Sửa trải nghiệm (UX)
+4.Sửa cách do (eval)
+Cho user thấy Al không chắc + sửa dược
+Đo dúng thứ quan trọng
+VD: email AI
+không chắc + highlight vàng: "Kiểm tra lại email này?"
+VD: không đo "87% đúng" mà đo "bao nhiêu email urgent bị phân loại nhẩm?"
+Hackathon
+Nhìn kết quả Al trước (định tính)
+thấy lỗi gì + rồi mới đo bao nhiêu % (định lượng) .
+Ít nhất
+vòng: chạy Al + nhìn output + tìm lỗi + sửa
+bằng~
+trong 4 cách trên + chạy lại.
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+38 / 52
+phải
+quả
+--- Trang 36 ---
+REFERENCE
+8 loại dữ liệu giá trị cao
+1.Dữ liệu thời gian thực
+2 Dữ liệu riêng user
+Giá cổ phiếu; giao thông; cảm biến IoT
+Lịch sừ mua, sở thích, hành vi dùng app
+VD: Grab
+traffic data để dự đoán giá cuốc
+VD: Netflix gợi ý phim theo lich sừ xem
+3.Dữliệu chuyên ngành
+4.Dữliệu đánh
+của người
+Ytế, pháp lý; tài chính-
+không có sẵn trên internet
+Nhãn, xếp hạng; chú thích từ chuyên gia / user
+VD: Dragon
+6OOK ca bệnh thật để train
+VD: bác sĩ đánh
+kết quả Al đoc X-quang
+5.Học tăng cường (RLHF)
+6.Dữliệu ngữ cành
+User chọn A vs B > model học "cái nào tốt hơn"
+Vịtrí thời gian; thiết bị; tình huống dùng
+VD: ChatGPT thu thumbs upldown để fine-tune
+VD: Google Maps gợi ý khác nhau lúc 8h sáng vs 8h tối
+7.Dữ liệu tích hợp
+8.Dữliệu tổng hợp
+Kết nối từ CRM, ERP, API nội bộ
+Tạo tự động bằng Al, dùng để
+cường data thật
+VD: Salesforce Einstein dùng data CRM để dự đoán deal
+VD: Dragon VI
+data gỉả > chi 30-60%
+phải thay
+data thật
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+39/52
+dùng
+giá
+dùng
+giá
+tăng
+bằng
+dùng
+--- Trang 37 ---
+ROI: tính bằng range, không 1 số
+AI ROI không cố định ~ phải tính 3 kịch bản:
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+40/52
+JJLs _
+--- Trang 38 ---
+ROI:
+truyền thống vs Al
+Truyên thống
+AI
+ROI
+Tính 1 số
+Tính 3 kịch bản (conservative
+realistic / optimistic)
+Mở rộng
+Chi phílđơn vị giảm khi mở rộng
+Chi phílđón vị có thể tăng theo lượng
+(suy luận; data, huấn luyện lại)
+"Xong"
+Ship
+=
+xong
+Ship
+=
+mới bắt đẩu (cẩn maintain + improve)
+Chi phí
+Năng lực
+Tốc độ
+luân + data +
+trì
+Độ chính xác + phạm vi + tốc độ
+Thời gian tạo giá trị + vòng lặp
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+41/52
+dùng
+Suy
+duy 7
+--- Trang 39 ---
+3 chiến lược ROI
+Copilot
+Uu tiên tốc độ
+Harvey
+Uu tiên năng lực
+Grammarly
+Nhạy chi phí
+Giảm thời gian code 55%
+Al cho luật sư
+30M+ free users
+ROI =
+lập trình viên tiết kiệm
+ROI = vụ mới không thể làm trước
+ROI = chi phí mỗi lân sửa phải thấp
+Chấp nhận độ chính xác vừa đủ
+Precision cực cao bắt buộc
+Tối ưu chi phí suy luận
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+42/ 52
+giờ
+--- Trang 40 ---
+ROI cho hackathon SPEC
+SPEC deliverable phải có ROI 3 kịch bản:
+Kịch bản
+Giả định
+ROI
+Thận trọng
+Độ chính xác thấp; áp dụng chậm
+[Tính cụ thể]
+Thuc tế
+Độ chính xác trung bình áp dụng vừa
+[Tính cụ thể]
+Lạc quan
+Độ chính xác cao; flywheel hoạt động
+[Tính cụ thể]
+Lưuý
+Không cân số chính xác. Cẩn logic rõ ràng và giả định hợp lý.
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+43/52
+--- Trang 41 ---
+Tổng kết: chuỗi domino
+Al không
+Al làm
+Feedback
+3
+Canvas
+chắc chắn
+gợiý?
+ROI
+0 AI
+không chắc chắn
+kết quả mỗi lẩn một khác; không phải phẩn mêm dúng 100%
+Al làm thay
+ý? _
+quyết định này ảnh hưởng mọi thứ phía sau
+3
+Yêu cẩu (Requirement)
+mô tả kết quả + lúc sai thì sao
+Trải nghiệm (UX)
+thiết kế cho lúc sai
+Đánh
+(Eval)
+sai bao nhiêu là chấp nhận được?
+Canvas
+gom 3 trụ thành 1 trang để bắt đẩu
+Feedback
+sản phẩm
+học; không thì xuống cấp
+ROI
+
+tính 3 kịch bản (thận trọng / thực tế | lạc quan), không
+1số
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+44/ 52
+thay
+trụ
+hay
+gợi
+hay
+trụ:
+giá
+phài
+phải
+--- Trang 42 ---
+Hackathon 2 ngày: từ SPEC dến Demo
+5 16.00-18.00 +
+6 cả ngày
+HAGK
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+45/52
+Day
+Day
+--- Trang 43 ---
+Timeline hackathon
+Thời gian
+Hoạt động
+Deliverable
+08/04 -
+
+16:00
+Briefing hackathon + chia nhóm + chọn track + bắt đẩu draft SPEC
+08/04 = 23h59
+Deadline nộp SPEC draft
+Topic + SPEC draft trên repo nhóm
+09/04 -
+
+09:00 (MI)
+GV review SPEC draft + phản hồi từng nhóm
+09/04 _11:00 (M2)
+"Show
+thứ chạy được"
+demo nhanh
+Al call thât
+09/04 _ 13:00 (M3)
+SPEC final + demo flow draft
+chuẩn bị bài trình bày
+09/04
+"
+15.30 (MA)
+Demo prep xong +
+run với nhóm bên cạnh
+09/04 _ 16:00 (MS)
+Gallery walk + demo round
+trình bày tại bàn
+Prototype deadline
+09/04 _ 17:00 (MG)
+Top teams present + trao giải + closing
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+46 / 52
+dry
+--- Trang 44 ---
+Scoring: 60% nhóm / 40% cá nhân
+Hạng mục
+Loai
+Điểm
+SPEC milestone
+Nhóm (20) + Cá nhân (5)
+25
+Prototype milestone
+Nhóm (10) + Cá nhân (5)
+15
+Demo
+Nhóm
+25
+Bài tập UX
+Cá nhân + bonus
+10
+Individual form (role + reflection)
+Cá nhân
+25
+100
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+47 / 52
+Day
+Tổng
+--- Trang 45 ---
+5 tracks + SPEC deliverable
+Chọn 1track
+SPEC draft
+
+6 items
+Track
+Lĩnh vực
+Gợiý
+Al Product Canvas (Value
+Trust / Feasibility + Learning Signal)
+A
+VinFast
+Alcho ô tô / di
+chuyển / hậu mãi
+User Stories x 4
+paths (Happy
+Low-confidence
+Failure / Correction)
+B
+Vinmec
+Al cho ytế
+trải nghiệm bệnh nhân
+Eval metrics: 3 metrics + threshold + red
+VinUni
+=
+VinSchool
+Al cho giáo dục / vận hành trường
+3 failure modes (Trigger
+Hậu
+/ Mitigation)
+XanhSM
+Al cho vận tải
+hành khách
+tài xế
+ROI 3 kịch bản (conservative
+realistic / optimistic)
+Mini Al spec 1 trang
+Tự chọn
+Tựchọn; phải có user thật
+Template: hackathon-toolkit/01-templatesl trên repo nhóm
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+48/52
+flag
+Top
+quả
+--- Trang 46 ---
+Prototype deliverable
+3 levels
+Sketch
+Mock prototype
+Working prototype (bonus++)
+Vẽ | draft flow trên giấy; slides; whiteboard
+Ullflow build được (Antigravity; Claude; vO,
+Có Al
+thật: input + Al + output
+Chưa build gì
+Figma..)
+Demo live được
+Đủ điểm
+Chưa gắn Al thật
+Bonus++ điểm
+Bonus điểm
+Sketch + Mock: vẫn phải có ít nhất 1 promptJAl call chạy thật kèm theo:
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+49/52
+chạy
+--- Trang 47 ---
+Vòng demo - quy dịnh
+1. Mỗi nhóm demo tại bàn mình (laptop + posterlslides)
+2.2-3
+người ở lại trình bày; 2-3 người đi xem nhóm khác
+3. Feedback đủ các team trong zone
+dùng feedback form (3 tiêu chí x 1-5)
+4. Nộpđủ feedback forms
+chấm cả chất lượng review
+Vibe-coding warning: Demo đẹp nhưng không có SPEC
+logic = 0 điểm SPEC. SPEC quan trọng hơn code.
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+50 / 52
+--- Trang 48 ---
+Chia nhóm
+chọn track
+Tạo nhóm 3-5 người - Chọn 1 track . Bắt đâu brainstorm bài toán
+Track
+Lĩnh vực
+Gợiý
+''
+VinFast
+Alcho ô tô / di
+chuyển ,
+hậu mãi
+8
+Vinmec
+Al cho
+trải nghiệm bệnh nhân
+VinUni
+~
+VinSchool
+Al cho giáo dục
+vận hành trường
+XanhSM
+Al cho vận tải
+hành khách / tài xế
+E
+Tự chọn
+Tự chọn lĩnh vực,
+có user thât
+16:00 + bắt đâu ngay
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+51/52
+ytế
+phải
+--- Trang 49 ---
+Deadline: 23.59 hôm nay (08/04)
+Submit trước 23:59 tối nay:
+Topic chốt
+problem statement 1 câu
+SPEC draft
+Canvas +
+hướng đi chính
+Phân
+nhóm ai làm gì
+Không cân hoàn chỉnh
+2
+draft đủđể GV review sáng Day 6.
+Instructor: [Tên giảng viên]
+Alin Action
+Day 05
+52/52
+công
