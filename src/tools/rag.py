@@ -1,21 +1,23 @@
-"""
-RAG Tool Module
-Giao tiếp với Vector Database (ChromaDB/Qdrant) để lấy content khóa học.
-"""
+"""RAG Tool — queries ChromaDB for course slide content."""
 
-def retrieve_from_slide(query: str, top_k: int = 3) -> str:
-    """
-    Nhúng câu hỏi (Embed) và quét trên VectorDB để lấy top chunks context.
-    
-    Args:
-        query (str): Câu hỏi/Từ khóa liên quan đến slide.
-        top_k (int): Số lượng chunk muốn lấy.
-        
-    Returns:
-        str: Chuỗi văn bản chứa thông tin khóa học.
-    """
-    # TODO: Embedding query
-    # TODO: Tìm kiếm similarity trên VectorDB
-    # TODO: Kết hợp kết quả
-    
-    return "Dummy context retrieved from Slide."
+from langchain_core.tools import tool
+
+
+@tool
+def search_slides(query: str) -> str:
+    """Search course lecture slides for relevant content about AI concepts,
+    theory, and examples. Use this when students ask about course material.
+    Do NOT use for external library docs or current events."""
+    # TODO (Teammate): Implement ChromaDB retrieval
+    # Suggested approach:
+    #   from langchain_chroma import Chroma
+    #   from langchain_openai import OpenAIEmbeddings
+    #   1. Load persisted ChromaDB from ./chroma_db/
+    #      embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
+    #      vector_store = Chroma(persist_directory="./chroma_db/",
+    #                            embedding_function=embeddings)
+    #   2. retriever = vector_store.as_retriever(search_kwargs={"k": 3})
+    #   3. docs = retriever.invoke(query)
+    #   4. Format results: "[source p.N]\ncontent" for each doc
+    # Reference: references/13-langchain-chroma-integration.md
+    return "TODO: Chua implement — can ket noi ChromaDB retriever."

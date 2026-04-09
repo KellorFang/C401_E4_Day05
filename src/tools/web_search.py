@@ -1,20 +1,19 @@
-"""
-Web Search Tool Module
-Dùng API mở rộng tìm kiếm (Tavily hoặc SerpAPI) cho các câu hỏi Out-of-Domain hoặc kiến thức cập nhật.
-"""
+"""Web Search Tool — searches the internet via Tavily."""
 
 import os
 
+from langchain_core.tools import tool
+
+
+@tool
 def search_web(query: str) -> str:
-    """
-    Thực hiện search query trên mạng.
-    
-    Args:
-        query (str): Cụm từ cần tìm.
-        
-    Returns:
-        str: Kết quả summary từ web.
-    """
-    api_key = os.getenv("TAVILY_API_KEY")
-    # TODO: Gọi Tavily Search API
-    return f"Dummy web search results for: {query}"
+    """Search the web for programming knowledge, library docs, or topics
+    not covered in course slides. Use when the question goes beyond course material.
+    Do NOT use when the answer is likely in course slides."""
+    # TODO (Teammate): Implement Tavily search
+    # Suggested approach:
+    #   from langchain_community.tools.tavily_search import TavilySearchResults
+    #   search = TavilySearchResults(api_key=os.getenv("TAVILY_API_KEY"))
+    #   results = search.invoke(query)
+    #   Format and return results as a string
+    return f"TODO: Chua implement — can ket noi Tavily API. Query: {query}"
