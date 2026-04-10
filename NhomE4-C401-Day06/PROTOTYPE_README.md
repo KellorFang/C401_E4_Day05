@@ -34,5 +34,5 @@ AI chỉ gợi ý và giải thích (augmentation), không bao giờ viết code
 | Nguyễn Xuân Mong | RAG Tool Developer — thiết kế và tối ưu hệ thống truy hồi dữ liệu, xây dựng pipeline xử lý từ PowerPoint bằng PyMuPDF + OpenCV, debug quy trình đọc-hiểu | `tools/rag.py`, `ingest.py` |
 | Nguyễn Ngọc Thắng (2A202600191) | Thiết kế công cụ RAG + thiết kế hệ thống Eval Metrics (Precision, Recall) cho từng tính năng của agent | `rag.py`, hệ thống chỉ số Eval Metrics trên `spec_draft.md`, nội dung phản biện/đánh giá chuyên môn cho 3/4 nhóm khác |
 | Trần Nhật Hoàng | RAG Tool Developer — Phát triển & Debug luồng tiền xử lý (Data Ingestion), trích xuất và tối ưu hóa dữ liệu đa phương tiện từ PDF (Text/Image) | `tools/slide_output`, `rag.py` |
-| Teammate | Web search tool + ArXiv tool | `tools/web_search.py`, `tools/arxiv_search.py` |
+| Phạm Đỗ Ngọc Minh | Web search tool + ArXiv tool | `tools/web_search.py`, `tools/arxiv_search.py` | Đánh giá chuyên môn cho 4 nhóm còn lại trong zone
 | Trần Minh Toàn | GitHub tool (scaffold) | `tools/github.py` |
