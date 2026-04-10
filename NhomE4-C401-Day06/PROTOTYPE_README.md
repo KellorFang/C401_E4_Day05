@@ -36,3 +36,4 @@ AI chỉ gợi ý và giải thích (augmentation), không bao giờ viết code
 | Trần Nhật Hoàng | RAG Tool Developer — Phát triển & Debug luồng tiền xử lý (Data Ingestion), trích xuất và tối ưu hóa dữ liệu đa phương tiện từ PDF (Text/Image) | `tools/slide_output`, `rag.py` |
 | Phạm Đỗ Ngọc Minh | Web search tool + ArXiv tool | `tools/web_search.py`, `tools/arxiv_search.py` | Đánh giá chuyên môn cho 4 nhóm còn lại trong zone
 | Trần Minh Toàn | GitHub tool (scaffold) | `tools/github.py` |
+| Lê Quý Công | Product Spec Lead & Architecture Designer — Hệ thống hóa tài liệu kỹ thuật, trực quan hóa kiến trúc hệ thống và quản lý report | `spec-final.md`, `demo-slide.pdf`, `PROTOTYPE_README.md` |

@@ -317,7 +317,7 @@ Bốn lỗi cốt lõi đã được ánh xạ trực tiếp với kiến trúc 
 ---
 
 ## 8. Phân công (Task Ownership & Phụ trách cấu thành)
-- Canvas - Công
+- Canvas, Kiến trúc hệ thống, Tài liệu hóa dự án & Report - Công
 - 4 paths - Mong
 - Eval metrics - Thắng
 - top 3 failure modes - Toàn + Hoàng
